@@ -26,3 +26,6 @@ jobs:
           echo "Running Import Script..."
           echo "Endpoint URL: $ENDPOINT_URL"
           echo "API Key: $API_KEY"
+          go run main.go import \
+            endpoint_url=$ENDPOINT_URL \
+            api_key=$API_KEY
