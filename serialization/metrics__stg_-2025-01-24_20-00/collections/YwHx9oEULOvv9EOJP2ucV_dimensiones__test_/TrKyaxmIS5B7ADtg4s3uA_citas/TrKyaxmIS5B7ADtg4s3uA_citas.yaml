@@ -1,0 +1,18 @@
+name: Citas
+description: null
+entity_id: TrKyaxmIS5B7ADtg4s3uA
+slug: citas
+created_at: '2024-12-02T14:35:45.330545Z'
+archived: false
+type: null
+parent_id: YwHx9oEULOvv9EOJP2ucV
+personal_owner_id: null
+namespace: null
+authority_level: null
+serdes/meta:
+- id: TrKyaxmIS5B7ADtg4s3uA
+  label: citas
+  model: Collection
+archive_operation_id: null
+archived_directly: null
+is_sample: false

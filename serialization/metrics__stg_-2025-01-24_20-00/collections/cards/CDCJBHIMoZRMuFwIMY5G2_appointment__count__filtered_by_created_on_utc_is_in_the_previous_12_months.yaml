@@ -1,0 +1,61 @@
+name: Appointment, Count, Filtered by Created On Utc is in the previous 12 months
+description: null
+entity_id: CDCJBHIMoZRMuFwIMY5G2
+created_at: '2024-12-03T15:13:09.661786Z'
+creator_id: kennt.chan@huli.io
+display: scalar
+archived: false
+collection_id: null
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Data Warehouse (DEV)
+table_id:
+- Data Warehouse (DEV)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data Warehouse (DEV)
+  query:
+    aggregation:
+    - - count
+    filter:
+    - time-interval
+    - - field
+      - - Data Warehouse (DEV)
+        - huli_main_aurora_result
+        - appointment
+        - created_on_utc
+      - base-type: type/DateTimeWithLocalTZ
+    - -12
+    - month
+    source-table:
+    - Data Warehouse (DEV)
+    - huli_main_aurora_result
+    - appointment
+  type: query
+result_metadata:
+- base_type: type/Integer
+  display_name: Count
+  effective_type: type/Integer
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+serdes/meta:
+- id: CDCJBHIMoZRMuFwIMY5G2
+  label: appointment__count__filtered_by_created_on_utc_is_in_the_previous_12_months
+  model: Card
+archived_directly: false
+metabase_version: v0.51.3 (d757d0b)
+source_card_id: null
+type: question
