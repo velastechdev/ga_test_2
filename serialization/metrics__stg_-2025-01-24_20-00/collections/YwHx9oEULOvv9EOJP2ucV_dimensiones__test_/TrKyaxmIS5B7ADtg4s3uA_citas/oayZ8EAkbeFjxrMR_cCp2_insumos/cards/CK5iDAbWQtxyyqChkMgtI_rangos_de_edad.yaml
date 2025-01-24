@@ -1,0 +1,64 @@
+name: Rangos de edad
+description: Rangos de edad definidos por SNOMED (Estándar Internacional de Salud)
+entity_id: CK5iDAbWQtxyyqChkMgtI
+created_at: '2024-12-05T20:50:31.527701Z'
+creator_id: christopher.diaz@huli.io
+display: table
+archived: true
+collection_id: oayZ8EAkbeFjxrMR_cCp2
+collection_preview: true
+collection_position: 1
+query_type: native
+database_id: Data WareHouse (PROD)
+table_id: null
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  native:
+    query: |-
+      WITH rangos_edad AS (
+        SELECT *
+        FROM UNNEST([
+          "-0 - Prenatal",
+          "-0-28 días - Neonatal",
+          "00-01 - Infancia",
+          "01-05 - Niñez Temprana",
+          "06-11 - Niñez Media",
+          "12-14 - Niñez Tardía",
+          "15-17 - Adolescencia",
+          "18-24 - Joven",
+          "25-44 - Adulto",
+          "45-64 - Adulto Medio",
+          "65+ - Adulto Mayor"
+        ]) AS rangos_edad
+      )
+      SELECT rangos_edad
+      FROM rangos_edad;
+    template-tags: {}
+  type: native
+result_metadata:
+- base_type: type/Dictionary
+  display_name: rangos_edad
+  effective_type: type/Dictionary
+  field_ref:
+  - field
+  - rangos_edad
+  - base-type: type/Dictionary
+  name: rangos_edad
+  semantic_type: null
+visualization_settings:
+  column_settings: null
+  table.pivot_column: rangos_edad
+serdes/meta:
+- id: CK5iDAbWQtxyyqChkMgtI
+  label: rangos_de_edad
+  model: Card
+archived_directly: true
+metabase_version: v1.51.6 (fc77ed4)
+source_card_id: null
+type: model
