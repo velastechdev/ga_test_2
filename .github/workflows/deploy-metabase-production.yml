@@ -21,7 +21,7 @@ jobs:
         if: success()
         env:
           API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT }}
+          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
         run: |
           echo "Running Import Script..."
           echo "Endpoint URL: $ENDPOINT_URL"
