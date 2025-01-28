@@ -1,9 +1,11 @@
 name: Serialization Test
 
-on: # No automatic triggers
-  workflow_dispatch: # Allows manual triggering
+on:
+  push:
+    branches:
+      - '*DEPLOY-VERSION*'
 
-jobs:        
+jobs:
   serialization_test:
     runs-on: ubuntu-latest
 
@@ -55,20 +57,6 @@ jobs:
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
             collection=$COLLECTION
-
-      # - name: Run Import Script
-      #   if: ${{ steps.export.outcome == 'success' }}
-      #   id: import
-      #   env:
-      #     API_KEY: ${{ secrets.STAGING_API_KEY }}
-      #     ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-      #   run: |
-      #     echo "Running Import Script..."
-      #     echo "Endpoint URL: $ENDPOINT_URL"
-      #     echo "API Key: $API_KEY"
-      #     go run main.go import \
-      #       endpoint_url=$ENDPOINT_URL \
-      #       api_key=$API_KEY
 
       - name: Validate Collection Name and Description
         id: validate_collection
