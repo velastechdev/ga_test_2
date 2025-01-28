@@ -1,0 +1,244 @@
+name: ¿Qué días agendaron más tus pacientes?
+description: null
+entity_id: pFbd1b5E0uaAK8NqT_gaH
+created_at: '2025-01-27T22:08:38.931223Z'
+creator_id: christopher.diaz@huli.io
+display: bar
+archived: false
+collection_id: oayZ8EAkbeFjxrMR_cCp2
+collection_preview: true
+collection_position: null
+query_type: native
+database_id: Data WareHouse (PROD)
+table_id:
+- Data WareHouse (PROD)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters:
+- default: '0'
+  id: e39c03ea-a041-4700-8ff6-4550814f59d0
+  name: Organization ID
+  slug: organization_id
+  target:
+  - variable
+  - - template-tag
+    - organization_id
+  type: number/=
+- id: d1b9cf13-583f-44ed-b29e-5e876dff3e51
+  name: Date Range
+  slug: date_range
+  target:
+  - dimension
+  - - template-tag
+    - date_range
+  type: date/range
+- id: 57d07afc-b7ed-4faa-b965-dbb9e9fe8af0
+  name: Is Confirmed
+  slug: is_confirmed
+  target:
+  - variable
+  - - template-tag
+    - is_confirmed
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - '1'
+      - Sí
+    - - '0'
+      - 'No'
+  values_source_type: static-list
+- id: aa963ab9-2d9e-42f2-a5e6-8fcd334c0a6e
+  name: Patient Sex
+  slug: patient_sex
+  target:
+  - variable
+  - - template-tag
+    - patient_sex
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - M
+      - Hombre
+    - - F
+      - Mujer
+  values_source_type: static-list
+- id: fab085fa-c18d-47e4-a0e0-c59a8e571242
+  name: Tags
+  slug: tags
+  target:
+  - dimension
+  - - template-tag
+    - tags
+  type: string/=
+  values_source_config:
+    card_id: JWLh-RI5Vs3LJfdcF369Y
+    value_field:
+    - field
+    - - Data WareHouse (PROD)
+      - huli_main_aurora_result
+      - appointment
+      - tags
+    - base-type: type/Text
+  values_source_type: card
+- id: 7c16e651-efee-40d7-8cd9-f0a9dd328a4f
+  name: Clinc Name
+  slug: clinc_name
+  target:
+  - dimension
+  - - template-tag
+    - clinc_name
+  type: string/=
+  values_source_config:
+    card_id: q61cd1kHGOwE6yS9vCA8J
+    value_field:
+    - field
+    - - Data WareHouse (PROD)
+      - huli_main_aurora_result
+      - appointment
+      - clinic_name
+    - base-type: type/Text
+  values_source_type: card
+- id: 1d82f9a5-69a8-45ad-bc92-1fd9a2d28cea
+  name: Age Range
+  slug: age_range
+  target:
+  - variable
+  - - template-tag
+    - age_range
+  type: category
+  values_query_type: list
+  values_source_config:
+    card_id: sDuY37zfnB7TeVmDsQAWE
+    value_field:
+    - field
+    - age_group
+    - base-type: type/Text
+  values_source_type: card
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  native:
+    collection: appointment
+    query: "SELECT\n  `source`.`Dia_de_la_semana` AS `Dia_de_la_semana`,\n  COUNT(*) AS `count`\nFROM\n  (\n    SELECT\n      `huli_main_aurora_result.appointment`.`start_date` AS `start_date`,\n      `huli_main_aurora_result.appointment`.`organization_id` AS `organization_id`,\n      `huli_main_aurora_result.appointment`.`appointment_status` AS `appointment_status`,\n      {{snippet: field_age_range}},\n      CASE \n        WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 1 THEN '1'\n        WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 0 THEN '0'\n        ELSE NULL -- Opcional para valores inesperados (como NULL)\n      END AS is_confirmed,\n      \n      CASE\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 1 THEN 'Domingo'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 2 THEN 'Lunes'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 3 THEN 'Martes'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 4 THEN 'Miércoles'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 5 THEN 'Jueves'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 6 THEN 'Viernes'\n        WHEN EXTRACT(\n          dayofweek\n          FROM\n            TIMESTAMP(\n              `huli_main_aurora_result.appointment`.`start_date`\n            )\n        ) = 7 THEN 'Sábado'\n        ELSE ''\n      END AS `Dia_de_la_semana`\n    FROM\n      `huli_main_aurora_result.appointment`\n    WHERE\n        `organization_id` = {{ organization_id }}\n    AND `appointment_status` = 'completed'\n    [[ AND {{ date_range }} ]]\n    [[ AND `patient_sex` = {{ patient_sex }} ]]\n    [[ AND {{ tags }} ]]\n    [[ AND {{ clinc_name }} ]]\n  ) AS `source`\nWHERE 1 = 1\n  [[ AND `source`.`is_confirmed` = {{ is_confirmed }} ]]\n  [[ AND `source`.`Rango_de_edad` IN ({{ age_range }}) ]]\nGROUP BY\n  `Dia_de_la_semana`\nORDER BY\n    CASE `Dia_de_la_semana`\n        WHEN 'Lunes' THEN 1\n        WHEN 'Martes' THEN 2\n        WHEN 'Miércoles' THEN 3\n        WHEN 'Jueves' THEN 4\n        WHEN 'Viernes' THEN 5\n        WHEN 'Sábado' THEN 6\n        WHEN 'Domingo' THEN 7\n        ELSE 8 -- Unexpected value\n    END;"
+    template-tags:
+      age_range:
+        display-name: Age Range
+        id: 1d82f9a5-69a8-45ad-bc92-1fd9a2d28cea
+        name: age_range
+        type: text
+      clinc_name:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - clinic_name
+        - null
+        display-name: Clinc Name
+        id: 7c16e651-efee-40d7-8cd9-f0a9dd328a4f
+        name: clinc_name
+        options: null
+        type: dimension
+        widget-type: string/=
+      date_range:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - start_date
+        - null
+        display-name: Date Range
+        id: d1b9cf13-583f-44ed-b29e-5e876dff3e51
+        name: date_range
+        type: dimension
+        widget-type: date/range
+      is_confirmed:
+        display-name: Is Confirmed
+        id: 57d07afc-b7ed-4faa-b965-dbb9e9fe8af0
+        name: is_confirmed
+        type: text
+      organization_id:
+        default: '0'
+        display-name: Organization ID
+        id: e39c03ea-a041-4700-8ff6-4550814f59d0
+        name: organization_id
+        type: number
+      patient_sex:
+        display-name: Patient Sex
+        id: aa963ab9-2d9e-42f2-a5e6-8fcd334c0a6e
+        name: patient_sex
+        type: text
+      'snippet: field_age_range':
+        display-name: 'Snippet: Field Age Range'
+        id: 30b68e01-a5cb-49af-8127-373ebbe6b79a
+        name: 'snippet: field_age_range'
+        snippet-id: TbowWUOLnLZKAesaYd15I
+        snippet-name: field_age_range
+        type: snippet
+      tags:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - tags
+        - null
+        display-name: Tags
+        id: fab085fa-c18d-47e4-a0e0-c59a8e571242
+        name: tags
+        options: null
+        type: dimension
+        widget-type: string/=
+  type: native
+result_metadata:
+- base_type: type/Text
+  display_name: Dia_de_la_semana
+  effective_type: type/Text
+  field_ref:
+  - field
+  - Dia_de_la_semana
+  - base-type: type/Text
+  name: Dia_de_la_semana
+  semantic_type: null
+- base_type: type/Integer
+  display_name: count
+  effective_type: type/Integer
+  field_ref:
+  - field
+  - count
+  - base-type: type/Integer
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Dia_de_la_semana
+  graph.label_value_formatting: auto
+  graph.metrics:
+  - count
+  graph.show_goal: false
+  graph.show_values: true
+  graph.x_axis.title_text: Día
+  graph.y_axis.title_text: Número de Citas
+  series_settings:
+    count:
+      color: '#88BF4D'
+      title: Citas
+serdes/meta:
+- id: pFbd1b5E0uaAK8NqT_gaH
+  label: ¿que_dias_agendaron_mas_tus_pacientes_
+  model: Card
+archived_directly: false
+metabase_version: v1.51.6 (fc77ed4)
+source_card_id: null
+type: question

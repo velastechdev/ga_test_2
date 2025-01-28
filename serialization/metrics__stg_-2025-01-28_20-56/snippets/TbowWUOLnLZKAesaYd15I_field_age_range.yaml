@@ -1,0 +1,224 @@
+name: field_age_range
+description: Permite determinar el alias del rango de edad al que pertenece un paciente. Revisar la pregunta Rangos de edad dentro de la dimensión Citas
+entity_id: TbowWUOLnLZKAesaYd15I
+created_at: '2024-12-05T21:21:06.791652Z'
+archived: false
+collection_id: null
+content: |-
+  CASE
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) < 0 THEN '-0 - Prenatal'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 0.0767 THEN '-0-28 días - Neonatal'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 1 THEN '00-01 - Infancia'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 5 THEN '01-05 - Niñez Temprana'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 11 THEN '06-11 - Niñez Media'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 14 THEN '12-14 - Niñez Tardía'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 17 THEN '15-17 - Adolescencia'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 24 THEN '18-24 - Joven'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 44 THEN '25-44 - Adulto'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) <= 64.9999 THEN '45-64 - Adulto Medio'
+    WHEN (
+      (
+        DATETIME_DIFF(
+          CURRENT_DATETIME(),
+          DATETIME(`patient_birthdate`),
+          month
+        ) + CASE
+          WHEN (
+            DATETIME(`patient_birthdate`) < CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) > EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN -1
+          WHEN (
+            DATETIME(`patient_birthdate`) > CURRENT_DATETIME()
+            AND EXTRACT(day FROM TIMESTAMP(`patient_birthdate`)) < EXTRACT(day FROM CURRENT_TIMESTAMP())
+          ) THEN 1
+          ELSE 0
+        END
+      ) / 12
+    ) >= 65 THEN '65+ - Adulto Mayor'
+    ELSE 'No Especificado'
+  END AS `Rango_de_edad`
+creator_id: christopher.diaz@huli.io
+serdes/meta:
+- id: TbowWUOLnLZKAesaYd15I
+  label: field_age_range
+  model: NativeQuerySnippet

@@ -1,0 +1,71 @@
+name: Clínicas
+description: null
+entity_id: q61cd1kHGOwE6yS9vCA8J
+created_at: '2024-12-13T21:06:15.997845Z'
+creator_id: christopher.diaz@huli.io
+display: table
+archived: false
+collection_id: oayZ8EAkbeFjxrMR_cCp2
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Data WareHouse (PROD)
+table_id:
+- Data WareHouse (PROD)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  query:
+    fields:
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - clinic_name
+      - base-type: type/Text
+    source-table:
+    - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+  type: query
+result_metadata:
+- base_type: type/Text
+  coercion_strategy: null
+  description: null
+  display_name: Clinic Name
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - clinic_name
+  - base-type: type/Text
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - clinic_name
+  name: clinic_name
+  semantic_type: null
+  settings: null
+  visibility_type: normal
+visualization_settings:
+  column_settings: null
+  table.cell_column: clinic_name
+serdes/meta:
+- id: q61cd1kHGOwE6yS9vCA8J
+  label: clinicas
+  model: Card
+archived_directly: false
+metabase_version: v1.51.6 (fc77ed4)
+source_card_id: null
+type: question
