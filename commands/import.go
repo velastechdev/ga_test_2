@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 type ImportCommand struct{}
@@ -77,6 +78,14 @@ func (i *ImportCommand) Execute(params map[string]interface{}) error {
 		return fmt.Errorf("failed to import collection: %w, output: %s", err, string(output))
 	}
 
+	// Check if the API response contains an error
+	if strings.Contains(string(output), "ERROR serialization.api") {
+		fmt.Printf("Failed API response: %s\n", string(output))
+		return fmt.Errorf("failed API response, output: %s", string(output))
+	}
+
+	// Print the command output for success
+	fmt.Printf("Command output: %s\n", string(output))
 	fmt.Println("Collection imported successfully.")
 
 	// Clean up the compressed file after successful import

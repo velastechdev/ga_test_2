@@ -11,12 +11,17 @@
 package commands
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 const (
 	serializationOuputFolder = "serialization"
+	getMethod                = "GET"
+	postMethod               = "POST"
+	putMethod                = "PUT"
 )
 
 // Command is the interface for all commands
@@ -56,9 +61,20 @@ func contains(slice []string, item string) bool {
 	return false
 }
 
-// makeHTTPRequest sends a POST request to the given URL with the provided API key
-func makeHTTPRequest(url, metabaseApiKey string) (*http.Response, error) {
-	req, err := http.NewRequest("POST", url, nil)
+// makeHTTPRequest sends an HTTP request to the specified URL
+func makeHTTPRequest(url, metabaseApiKey, method string, payload interface{}) (*http.Response, error) {
+	var requestBody *bytes.Buffer
+	if payload != nil {
+		jsonData, err := json.Marshal(payload)
+		if err != nil {
+			return nil, fmt.Errorf("failed to encode payload: %w", err)
+		}
+		requestBody = bytes.NewBuffer(jsonData)
+	} else {
+		requestBody = &bytes.Buffer{}
+	}
+
+	req, err := http.NewRequest(method, url, requestBody)
 	if err != nil {
 		return nil, fmt.Errorf("creating request failed: %w", err)
 	}

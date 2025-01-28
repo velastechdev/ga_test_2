@@ -48,7 +48,7 @@ func (e *ExportCommand) Execute(params map[string]interface{}) error {
 	url := fmt.Sprintf("%s/api/ee/serialization/export?%s", endpointURL, queryParams)
 
 	// Make HTTP request
-	resp, err := makeHTTPRequest(url, metabaseApiKey)
+	resp, err := makeHTTPRequest(url, metabaseApiKey, postMethod, nil)
 	if err != nil {
 		return fmt.Errorf("HTTP request failed: %w", err)
 	}

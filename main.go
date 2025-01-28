@@ -34,6 +34,8 @@ func main() {
 	// Register commands
 	executor.RegisterCommand("export", &commands.ExportCommand{})
 	executor.RegisterCommand("import", &commands.ImportCommand{})
+	executor.RegisterCommand("update_collection", &commands.UpdateCollectionCommand{})
+	executor.RegisterCommand("validate_collection", &commands.ValidateCollectionCommand{})
 
 	// Execute the command
 	err := executor.ExecuteCommand(commandName, params)

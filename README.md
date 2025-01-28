@@ -67,4 +67,38 @@ go run main.go import endpoint_url=https://hp-metrics.huli.io/ api_key=ABCD1234
 
 ## Workflow for deploying Metabase
 
-1. **Deploy Staging Metabase**: This step involves deploying the serialization from the staging Metabase instance and saving it in the `serialization/` directory. The deployment process is automated through GitHub Actions workflows. These workflows are triggered when a branch with the keyword DEPLOY-VERSION in its name is pushed to the repository. The workflow configuration can be found in the `.github/workflows/deploy-metabase-staging.yml` file.
+1. **Deploy Staging Metabase**: This step involves deploying the serialization from the staging Metabase instance and saving it in the `serialization/` directory. The deployment process is automated through GitHub Actions workflows. This workflow is triggered when a branch with the keyword DEPLOY-VERSION in its name is pushed to the repository. The workflow configuration can be found in the `.github/workflows/deploy-metabase-staging.yml` file.
+
+2. **Deploy Production Metabase**: This step involves deploying the serialization saved in the `serialization/` directory to the production Metabase instance. The deployment process is automated through GitHub Actions workflows. This workflow is triggered when a release of this repository is done. The workflow configuration can be found in the `.github/workflows/deploy-metabase-production.yml` file.
+
+3. **Serialization Test**: This step involves testing the serialization process. The test process is automated through GitHub Actions workflows. This workflow is triggered when the Deploy Staging Metabase workflow is executed. The workflow configuration can be found in the `.github/workflows/test-serialization.yml` file.
+
+### Workflow Permissions
+
+Make sure the workflow has sufficient permissions to push changes:
+
+1. Go to the repository settings. `Settings > Actions > General > Workflow permissions`.
+
+2. Ensure the Read and write permissions option is selected.
+
+3. Save the changes.
+
+### Configure Github Action Variables
+
+Set up the required secrets and variables for your repository:
+
+Repository Secrets:
+
+- `STAGING_API_KEY`: The API key required to authenticate with the staging Metabase instance.
+
+- `PRODUCTION_API_KEY`: The API key required to authenticate with the production Metabase instance.
+
+Repository Variables:
+
+- `DEFAULT_COLLECTION`: Specify the default collection used in the workflow.
+
+- `STAGING_ENDPOINT`: The Metabase API URL to export the collection from.
+
+---
+
+This section provides a clear and concise guide for anyone setting up the repository to use your workflow. Let me know if you’d like to adjust the wording or add further details!
