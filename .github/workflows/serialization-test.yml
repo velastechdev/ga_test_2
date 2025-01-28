@@ -3,23 +3,7 @@ name: Serialization Test
 on: # No automatic triggers
   workflow_dispatch: # Allows manual triggering
 
-jobs:
-  run_serialization_test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Serialization Test Workflow
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Serialization Test # Name of the workflow to trigger
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  wait_for_serialization_test:
-    runs-on: ubuntu-latest
-    needs: run_serialization_test # Waits for the above job to finish
-    steps:
-      - name: Wait for Serialization Test to Complete
-        run: echo "Serialization test workflow completed successfully."
-        
+jobs:        
   serialization_test:
     runs-on: ubuntu-latest
 
