@@ -1,0 +1,242 @@
+name: ¿Qué horario no se presentan tus pacientes?
+description: null
+entity_id: OpcNiOEXjyh3TtPPWQCso
+created_at: '2025-01-27T22:08:38.931223Z'
+creator_id: christopher.diaz@huli.io
+display: bar
+archived: false
+collection_id: oayZ8EAkbeFjxrMR_cCp2
+collection_preview: true
+collection_position: null
+query_type: native
+database_id: Data WareHouse (PROD)
+table_id: null
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters:
+- default: '0'
+  id: 511f7da5-bd5b-4d04-aec2-ccb1a9ec9673
+  name: Organization ID
+  slug: organization_id
+  target:
+  - variable
+  - - template-tag
+    - organization_id
+  type: number/=
+- id: 2df4b199-4ca5-489c-ae7e-7da176f56ad0
+  name: Date Range
+  slug: date_range
+  target:
+  - dimension
+  - - template-tag
+    - date_range
+  type: date/range
+- id: 61616b8e-0b7f-42bc-9395-e0102f01906c
+  name: Patient Sex
+  slug: patient_sex
+  target:
+  - variable
+  - - template-tag
+    - patient_sex
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - M
+      - Hombre
+    - - F
+      - Mujer
+  values_source_type: static-list
+- id: 058829bf-f87b-4a2a-95d0-0bbed84c9d15
+  name: Tags
+  slug: tags
+  target:
+  - dimension
+  - - template-tag
+    - tags
+  type: string/=
+  values_source_config:
+    card_id: JWLh-RI5Vs3LJfdcF369Y
+    value_field:
+    - field
+    - - Data WareHouse (PROD)
+      - huli_main_aurora_result
+      - appointment
+      - tags
+    - base-type: type/Text
+  values_source_type: card
+- id: 0937d602-4a3c-49be-9093-8441f87d4da4
+  name: Clinc Name
+  slug: clinc_name
+  target:
+  - dimension
+  - - template-tag
+    - clinc_name
+  type: string/=
+  values_source_config:
+    card_id: q61cd1kHGOwE6yS9vCA8J
+    value_field:
+    - field
+    - - Data WareHouse (PROD)
+      - huli_main_aurora_result
+      - appointment
+      - clinic_name
+    - base-type: type/Text
+  values_source_type: card
+- id: d823f866-6abb-4a0a-b57a-772c1885c1c3
+  name: Is Confirmed
+  slug: is_confirmed
+  target:
+  - variable
+  - - template-tag
+    - is_confirmed
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - '1'
+      - Sí
+    - - '0'
+      - 'No'
+  values_source_type: static-list
+- id: 6ceea170-463f-47b8-9f5e-a07938b305c7
+  name: Age Range
+  slug: age_range
+  target:
+  - variable
+  - - template-tag
+    - age_range
+  type: category
+  values_query_type: list
+  values_source_config:
+    card_id: sDuY37zfnB7TeVmDsQAWE
+    value_field:
+    - field
+    - age_group
+    - base-type: type/Text
+  values_source_type: card
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  native:
+    collection: appointment
+    query: "SELECT\n  FORMAT('%02d:00 %s', \n         CASE \n           WHEN `Hour_in_hrs` = 0 THEN 12 -- 0 hours that correspond to 12 AM\n           WHEN `Hour_in_hrs` > 12 THEN `Hour_in_hrs` - 12 -- PM hours after 12\n           ELSE `Hour_in_hrs` -- AM hours and 12 PM \n         END, \n         IF(`Hour_in_hrs` >= 12, 'PM', 'AM')) AS `Hour_in_ampm`,\n  COUNT(*) AS `count`\nFROM\n  (\n    SELECT\n        EXTRACT(hour FROM TIMESTAMP(`start_date`)) AS `Hour_in_hrs`,\n        `huli_main_aurora_result.appointment`,\n        {{snippet: field_age_range}},\n        CASE \n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 1 THEN '1'\n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 0 THEN '0'\n            ELSE NULL -- Opcional para valores inesperados (como NULL)\n        END AS is_confirmed\n    FROM `huli_main_aurora_result.appointment`\n  )\nWHERE  `huli_main_aurora_result.appointment`.`appointment_status` = 'no-show'\nAND `huli_main_aurora_result.appointment`.`organization_id` = {{ organization_id }}\n[[ AND {{ date_range }} ]]\n[[ AND `huli_main_aurora_result.appointment`.`patient_sex` = {{ patient_sex }} ]]\n[[ AND {{ tags }} ]]\n[[ AND {{ clinc_name }} ]]\n[[ AND is_confirmed = {{ is_confirmed }} ]]\n[[ AND `Rango_de_edad` IN ({{ age_range }}) ]]\nGROUP BY\n  `Hour_in_ampm`, `Hour_in_hrs`\nORDER BY\n  `Hour_in_hrs`;"
+    template-tags:
+      age_range:
+        display-name: Age Range
+        id: 6ceea170-463f-47b8-9f5e-a07938b305c7
+        name: age_range
+        type: text
+      clinc_name:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - clinic_name
+        - null
+        display-name: Clinc Name
+        id: 0937d602-4a3c-49be-9093-8441f87d4da4
+        name: clinc_name
+        options: null
+        type: dimension
+        widget-type: string/=
+      date_range:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - start_date
+        - null
+        display-name: Date Range
+        id: 2df4b199-4ca5-489c-ae7e-7da176f56ad0
+        name: date_range
+        options: null
+        type: dimension
+        widget-type: date/range
+      is_confirmed:
+        display-name: Is Confirmed
+        id: d823f866-6abb-4a0a-b57a-772c1885c1c3
+        name: is_confirmed
+        type: text
+      organization_id:
+        default: '0'
+        display-name: Organization ID
+        id: 511f7da5-bd5b-4d04-aec2-ccb1a9ec9673
+        name: organization_id
+        type: number
+      patient_sex:
+        display-name: Patient Sex
+        id: 61616b8e-0b7f-42bc-9395-e0102f01906c
+        name: patient_sex
+        type: text
+      'snippet: field_age_range':
+        display-name: 'Snippet: Field Age Range'
+        id: a7d81724-6596-4320-8589-c5b9c7028d7f
+        name: 'snippet: field_age_range'
+        snippet-id: TbowWUOLnLZKAesaYd15I
+        snippet-name: field_age_range
+        type: snippet
+      tags:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - tags
+        - null
+        display-name: Tags
+        id: 058829bf-f87b-4a2a-95d0-0bbed84c9d15
+        name: tags
+        options: null
+        type: dimension
+        widget-type: string/=
+  type: native
+result_metadata:
+- base_type: type/Text
+  display_name: Hour_in_ampm
+  effective_type: type/Text
+  field_ref:
+  - field
+  - Hour_in_ampm
+  - base-type: type/Text
+  name: Hour_in_ampm
+  semantic_type: null
+- base_type: type/Integer
+  display_name: count
+  effective_type: type/Integer
+  field_ref:
+  - field
+  - count
+  - base-type: type/Integer
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Hour_in_ampm
+  graph.metrics:
+  - count
+  graph.series_order: null
+  graph.series_order_dimension: null
+  graph.show_values: true
+  graph.x_axis.title_text: Hora
+  graph.y_axis.title_text: Número de Citas
+  series_settings:
+    count:
+      color: '#D10057'
+      title: Citas
+serdes/meta:
+- id: OpcNiOEXjyh3TtPPWQCso
+  label: ¿que_horario_no_se_presentan_tus_pacientes_
+  model: Card
+archived_directly: false
+metabase_version: v1.51.6 (fc77ed4)
+source_card_id: null
+type: question

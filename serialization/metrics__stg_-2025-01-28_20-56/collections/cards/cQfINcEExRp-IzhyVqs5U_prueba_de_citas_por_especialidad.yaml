@@ -1,0 +1,58 @@
+name: Prueba de citas por especialidad
+description: null
+entity_id: cQfINcEExRp-IzhyVqs5U
+created_at: '2024-12-02T17:36:27.977406Z'
+creator_id: steve.vega@huli.io
+display: row
+archived: false
+collection_id: null
+collection_preview: true
+collection_position: null
+query_type: native
+database_id: Data Warehouse (DEV)
+table_id: null
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data Warehouse (DEV)
+  native:
+    query: "SELECT \n    specialty,\n    COUNT(*) AS total_appointments\nFROM (\n    SELECT \n        appointment_id,\n        TRIM(specialty) AS specialty  -- Limpia espacios adicionales en los nombres de especialidad\n    FROM `huli_main_aurora_result.appointment_report`,\n    UNNEST(SPLIT(hcp_specialties, ',')) AS specialty\n)\nGROUP BY specialty\nORDER BY total_appointments DESC;"
+    template-tags: {}
+  type: native
+result_metadata:
+- base_type: type/Text
+  display_name: specialty
+  effective_type: type/Text
+  field_ref:
+  - field
+  - specialty
+  - base-type: type/Text
+  name: specialty
+  semantic_type: null
+- base_type: type/Integer
+  display_name: total_appointments
+  effective_type: type/Integer
+  field_ref:
+  - field
+  - total_appointments
+  - base-type: type/Integer
+  name: total_appointments
+  semantic_type: null
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - specialty
+  graph.metrics:
+  - total_appointments
+serdes/meta:
+- id: cQfINcEExRp-IzhyVqs5U
+  label: prueba_de_citas_por_especialidad
+  model: Card
+archived_directly: false
+metabase_version: v0.51.2 (8bdb22c)
+source_card_id: null
+type: question
