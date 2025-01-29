@@ -1,74 +1,30 @@
-name: Serialization Test
+name: Run Integration Tests
 
 on:
   push:
     branches:
-      - '*DEPLOY-VERSION*'
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  serialization_test:
+  integration-test:
     runs-on: ubuntu-latest
 
+    env:
+      STAGING_ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+      STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+      TEST_COLLECTION_ID: ${{ vars.TEST_COLLECTION_ID }}
+
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set Up Go
-        uses: actions/setup-go@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          go-version: '1.23.1'
-      
-      - name: Generate Random String
-        id: random_string
-        run: |
-          RANDOM_STRING=$(LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 6 || true)
-          if [ -z "$RANDOM_STRING" ]; then
-            echo "Failed to generate a random string"
-            exit 1
-          fi
-          echo "Generated random string: $RANDOM_STRING"
-          echo "RANDOM_STRING=$RANDOM_STRING" >> $GITHUB_ENV
+          go-version: 1.21
 
-      - name: Update Collection Name and Description
-        id: update_collection
-        env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-          COLLECTION: ${{ vars.TEST_COLLECTION_ID }}
-          RANDOM_STRING: ${{ env.RANDOM_STRING }}
-        run: |
-          echo "Running Update Collection Script..."
-          go run main.go update_collection \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY \
-            collection=$COLLECTION \
-            random_string=$RANDOM_STRING
-
-      - name: Run Export Script
-        if: ${{ steps.update_collection.outcome == 'success' }}
-        id: export
-        env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-          COLLECTION: ${{ vars.TEST_COLLECTION_ID }}
-        run: |
-          echo "Running Export Script..."
-          go run main.go export \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY \
-            collection=$COLLECTION
-
-      - name: Validate Collection Name and Description
-        id: validate_collection
-        env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-          COLLECTION: ${{ vars.TEST_COLLECTION_ID }}
-          RANDOM_STRING: ${{ env.RANDOM_STRING }}
-        run: |
-          echo "Running Validate Collection Script..."
-          go run main.go validate_collection \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY \
-            collection=$COLLECTION \
-            random_string=$RANDOM_STRING
+      - name: Run Integration Tests
+        run: go test -v ./...
