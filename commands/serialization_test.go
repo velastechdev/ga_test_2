@@ -42,11 +42,30 @@ func TestSerializationIntegration(t *testing.T) {
 		"collection":    collectionID,
 	}
 
-	command := &UpdateCollectionCommand{}
-	err = command.Execute(params)
+	updateCommand := &UpdateCollectionCommand{}
+	err = updateCommand.Execute(params)
 	if err != nil {
 		t.Fatalf("Integration test failed: %v", err)
 	}
+
+	exportCollectionCommand := &ExportCommand{}
+	err = exportCollectionCommand.Execute(params)
+	if err != nil {
+		t.Fatalf("Integration test failed: %v", err)
+	}
+
+	// importCollectionCommand := &ImportCommand{}
+	// err = importCollectionCommand.Execute(params)
+	// if err != nil {
+	// 	t.Fatalf("Integration test failed: %v", err)
+	// }
+
+	validateCommand := &ValidateCollectionCommand{}
+	err = validateCommand.Execute(params)
+	if err != nil {
+		t.Fatalf("Integration test failed: %v", err)
+	}
+
 }
 
 // RandomString retrieves a random string
