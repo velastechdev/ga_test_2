@@ -29,7 +29,7 @@ type TestStep struct {
 func getEnv(key string, t *testing.T) string {
 	value := os.Getenv(key)
 	if value == "" {
-		t.Fatalf("Integration test failed: missing environment variable %s", key)
+		t.Fatalf("Integration test failed: missing environment variabsle   %s", key)
 	}
 	return value
 }
