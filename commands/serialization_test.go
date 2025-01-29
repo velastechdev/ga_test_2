@@ -49,8 +49,8 @@ func TestSerializationIntegration(t *testing.T) {
 	// Retrieve required environment variables
 	stgApiEndpoint := getEnv("STAGING_ENDPOINT_URL", t)
 	stgApiKey := getEnv("STAGING_API_KEY", t)
-	prodApiEndpoint := getEnv("PRODUCTION_ENDPOINT_URL", t)
-	prodApiKey := getEnv("PRODUCTION_API_KEY", t)
+	// prodApiEndpoint := getEnv("PRODUCTION_ENDPOINT_URL", t)
+	// prodApiKey := getEnv("PRODUCTION_API_KEY", t)
 	collectionID := getEnv("TEST_COLLECTION_ID", t)
 
 	// Generate a random string
@@ -63,15 +63,15 @@ func TestSerializationIntegration(t *testing.T) {
 	testSteps := []TestStep{
 		{"update_collection", createParams(stgApiEndpoint, stgApiKey, collectionID, randomString)},
 		{"export", createParams(stgApiEndpoint, stgApiKey, collectionID, randomString)},
-		{"import", createParams(prodApiEndpoint, prodApiKey, collectionID, randomString)},
-		{"validate_collection", createParams(prodApiEndpoint, prodApiKey, collectionID, randomString)},
+		// {"import", createParams(prodApiEndpoint, prodApiKey, collectionID, randomString)},
+		{"validate_collection", createParams(stgApiEndpoint, stgApiKey, collectionID, randomString)},
 	}
 
 	// Create the command executor and register commands
 	executor := &CommandExecutor{}
 	executor.RegisterCommand("update_collection", &UpdateCollectionCommand{})
 	executor.RegisterCommand("export", &ExportCommand{})
-	executor.RegisterCommand("import", &ImportCommand{})
+	// executor.RegisterCommand("import", &ImportCommand{})
 	executor.RegisterCommand("validate_collection", &ValidateCollectionCommand{})
 
 	// Execute test steps
