@@ -118,8 +118,6 @@ func (u *UpdateCollectionCommand) updateCollectionInfo(apiEndpoint, apiKey, suff
 
 // appendSuffixToField appends a suffix to the given field
 func appendSuffixToField(field interface{}, suffix string) (string, error) {
-	fmt.Printf("Updating field: %v\n", field)
-
 	// Ensure the field is a string
 	if fieldStr, ok := field.(string); ok {
 		if strings.Contains(fieldStr, " | ") {

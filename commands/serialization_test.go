@@ -19,6 +19,13 @@ import (
 	"testing"
 )
 
+var testSteps = map[int]string{
+	1: "update_collection",
+	2: "export",
+	// 3: "import",
+	3: "validate_collection",
+}
+
 func TestSerializationIntegration(t *testing.T) {
 	stgApiEndpoint := os.Getenv("STAGING_ENDPOINT_URL")
 	stgApiKey := os.Getenv("STAGING_API_KEY")
@@ -42,28 +49,21 @@ func TestSerializationIntegration(t *testing.T) {
 		"collection":    collectionID,
 	}
 
-	updateCommand := &UpdateCollectionCommand{}
-	err = updateCommand.Execute(params)
-	if err != nil {
-		t.Fatalf("Integration test failed: %v", err)
-	}
+	// Create the command executor
+	executor := &CommandExecutor{}
 
-	exportCollectionCommand := &ExportCommand{}
-	err = exportCollectionCommand.Execute(params)
-	if err != nil {
-		t.Fatalf("Integration test failed: %v", err)
-	}
+	// Register commands
+	executor.RegisterCommand(testSteps[1], &UpdateCollectionCommand{})
+	executor.RegisterCommand(testSteps[2], &ExportCommand{})
+	// executor.RegisterCommand(testSteps[3], &ImportCommand{})
+	executor.RegisterCommand(testSteps[3], &ValidateCollectionCommand{})
 
-	// importCollectionCommand := &ImportCommand{}
-	// err = importCollectionCommand.Execute(params)
-	// if err != nil {
-	// 	t.Fatalf("Integration test failed: %v", err)
-	// }
-
-	validateCommand := &ValidateCollectionCommand{}
-	err = validateCommand.Execute(params)
-	if err != nil {
-		t.Fatalf("Integration test failed: %v", err)
+	for index, step := range testSteps {
+		fmt.Printf("Executing step %d: %s\n", index, step)
+		err := executor.ExecuteCommand(step, params)
+		if err != nil {
+			t.Fatalf("Integration test failed at step %d: %v", index, err)
+		}
 	}
 
 }
