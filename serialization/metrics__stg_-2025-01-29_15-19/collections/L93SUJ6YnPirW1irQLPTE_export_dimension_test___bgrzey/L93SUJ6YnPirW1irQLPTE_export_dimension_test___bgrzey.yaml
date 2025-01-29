@@ -1,7 +1,7 @@
-name: Export Dimension Test | KURU8Q
-description: Descripcion de la coleccion de Dimesiones test  | KURU8Q
+name: Export Dimension Test | bGrzEy
+description: Descripcion de la coleccion de Dimesiones test  | bGrzEy
 entity_id: L93SUJ6YnPirW1irQLPTE
-slug: export_dimension_test___kuru8q
+slug: export_dimension_test___bgrzey
 created_at: '2024-12-17T23:32:41.524283Z'
 archived: false
 type: null
@@ -11,7 +11,7 @@ namespace: null
 authority_level: null
 serdes/meta:
 - id: L93SUJ6YnPirW1irQLPTE
-  label: export_dimension_test___kuru8q
+  label: export_dimension_test___bgrzey
   model: Collection
 archive_operation_id: null
 archived_directly: null
