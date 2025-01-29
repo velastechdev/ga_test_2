@@ -1,12 +1,9 @@
 name: Run Integration Tests
 
 on:
-  push:
-    branches-ignore:
-      - "*DEPLOY-VERSION*"  # Ignore branches containing 'DEPLOY-VERSION'
   pull_request:
     branches-ignore:
-      - "*DEPLOY-VERSION*"  # Ignore PRs containing 'DEPLOY-VERSION'
+      - "*DEPLOY-VERSION*"
 
 jobs:
   integration-test:
@@ -15,6 +12,8 @@ jobs:
     env:
       STAGING_ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
       STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+      PRODUCTION_ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
+      PRODUCTION_API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
       TEST_COLLECTION_ID: ${{ vars.TEST_COLLECTION_ID }}
 
     steps:
