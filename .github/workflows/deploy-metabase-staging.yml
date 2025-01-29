@@ -1,39 +1,23 @@
 name: Deploy Metabase Staging
 
 on:
-  workflow_run:
-    workflows: ["Serialization Test"]
-    branches: ["*DEPLOY-VERSION*"]
-    types:
-      - completed
+  push:
+    branches:
+      - '*DEPLOY-VERSION*'
 
 jobs:
+        
   deploy_metabase_staging:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.workflow_run.head_branch }}
 
       - name: Set Up Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.23.1'
-
-      - name: Debug Branch Name
-        run: |
-          echo "Branch name is: ${{ github.event.workflow_run.head_branch }}"
-
-      # NEW STEP: Checkout the branch before running the export script
-      - name: Ensure Correct Branch
-        env:
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-        run: |
-          git fetch origin $BRANCH
-          git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH
-          echo "Checked out branch: $(git branch --show-current)"
 
       - name: Run Export Script
         id: export
@@ -41,70 +25,47 @@ jobs:
           API_KEY: ${{ secrets.STAGING_API_KEY }}
           ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
           COLLECTION: ${{ vars.DEFAULT_COLLECTION }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
-          echo "Running Export Script on branch: $(git branch --show-current)"
+          echo "Running Export Script..."
           go run main.go export \
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
             collection=$COLLECTION
 
-      - name: Commit and Push Exported Files
+      - name: Commit and Push Exported Files to Main
         if: ${{ steps.export.outcome == 'success' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}  
         run: |
           echo "Preparing to commit and push exported serialization..."
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-      
-          if [ -z "$BRANCH" ]; then
-            echo "Error: BRANCH variable is empty!"
-            exit 1
-          fi
-      
-          echo "Using branch: $(git branch --show-current)"
-      
+        
           git add .
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Add exported serialization from $BRANCH"
-            git push origin $BRANCH
+            git commit -m "Add exported serialization from DEPLOY-VERSION branch"
           fi
-
-      - name: Merge to Main
-        if: ${{ steps.export.outcome == 'success' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
-        run: |
+        
           git fetch origin main
           git checkout main
-          git pull origin main
-      
-          if git show-ref --verify --quiet refs/remotes/origin/$BRANCH; then
-            echo "Merging changes from branch: $BRANCH"
-            git merge origin/$BRANCH --no-ff -m "Merge changes from $BRANCH"
-            git push origin main
-          else
-            echo "Branch $BRANCH does not exist remotely!"
-            exit 1
-          fi
+        
+          git merge "${GITHUB_REF##*/}" --no-ff -m "Merge changes from ${GITHUB_REF##*/}"
+          git push origin main
 
       - name: Delete Branch After Merge
         if: ${{ steps.export.outcome == 'success' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BRANCH: ${{ github.event.workflow_run.head_branch }}
         run: |
-          echo "Deleting branch: $BRANCH"
-          if [[ "$BRANCH" == "main" ]]; then
+          echo "Deleting branch: ${GITHUB_REF##*/}"
+          BRANCH_TO_DELETE="${GITHUB_REF##*/}"
+          if [[ "$BRANCH_TO_DELETE" == "main" ]]; then
             echo "Not deleting the main branch."
           else
             curl -X DELETE \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/$BRANCH"
+              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${BRANCH_TO_DELETE}"
           fi

@@ -2,11 +2,11 @@ name: Run Integration Tests
 
 on:
   push:
-    branches:
-      - main
+    branches-ignore:
+      - "*DEPLOY-VERSION*"  # Ignore branches containing 'DEPLOY-VERSION'
   pull_request:
-    branches:
-      - main
+    branches-ignore:
+      - "*DEPLOY-VERSION*"  # Ignore PRs containing 'DEPLOY-VERSION'
 
 jobs:
   integration-test:
