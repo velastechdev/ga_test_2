@@ -56,14 +56,6 @@ jobs:
             exit 1
           fi
       
-          echo "Using branch: $BRANCH"
-      
-          # Fetch latest branch info
-          git fetch origin $BRANCH  
-      
-          # Checkout or create the branch locally
-          git checkout $BRANCH || git checkout -b $BRANCH origin/$BRANCH  
-      
           # Add and commit changes if there are any
           git add .
           if git diff --cached --quiet; then
