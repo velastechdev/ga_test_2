@@ -44,6 +44,7 @@ jobs:
         if: ${{ steps.export.outcome == 'success' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}  # Explicitly set the branch
         run: |
           echo "Preparing to commit and push exported serialization..."
           git config --global user.name "GitHub Actions Bot"
@@ -54,6 +55,8 @@ jobs:
             echo "Error: BRANCH variable is empty!"
             exit 1
           fi
+      
+          echo "Using branch: $BRANCH"
       
           # Fetch latest branch info
           git fetch origin $BRANCH  
