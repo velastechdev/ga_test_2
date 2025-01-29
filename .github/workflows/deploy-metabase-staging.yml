@@ -22,6 +22,10 @@ jobs:
         with:
           go-version: '1.23.1'
 
+      - name: Debug Branch Name
+        run: |
+          echo "Branch name is: ${{ github.event.workflow_run.head_branch }}"
+
       - name: Run Export Script
         id: export
         env:
