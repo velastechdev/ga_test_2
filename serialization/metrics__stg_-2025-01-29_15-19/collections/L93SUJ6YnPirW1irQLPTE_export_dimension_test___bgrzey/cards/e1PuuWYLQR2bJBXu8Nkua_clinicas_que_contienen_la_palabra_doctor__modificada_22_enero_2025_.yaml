@@ -1,11 +1,11 @@
-name: Clínicas
-description: null
-entity_id: q61cd1kHGOwE6yS9vCA8J
-created_at: '2024-12-13T21:06:15.997845Z'
+name: Clínicas que contienen la palabra Doctor (modificada 22 enero 2025)
+description: Descripción añadida
+entity_id: e1PuuWYLQR2bJBXu8Nkua
+created_at: '2025-01-28T22:43:39.698956Z'
 creator_id: christopher.diaz@huli.io
-display: table
+display: scalar
 archived: false
-collection_id: oayZ8EAkbeFjxrMR_cCp2
+collection_id: L93SUJ6YnPirW1irQLPTE
 collection_preview: true
 collection_position: null
 query_type: query
@@ -23,49 +23,39 @@ parameter_mappings: []
 dataset_query:
   database: Data WareHouse (PROD)
   query:
-    fields:
+    aggregation:
+    - - count
+    filter:
+    - contains
     - - field
       - - Data WareHouse (PROD)
         - huli_main_aurora_result
         - appointment
         - clinic_name
       - base-type: type/Text
+    - Doctor
+    - case-sensitive: false
     source-table:
     - Data WareHouse (PROD)
     - huli_main_aurora_result
     - appointment
   type: query
 result_metadata:
-- base_type: type/Text
-  coercion_strategy: null
-  description: null
-  display_name: Clinic Name
-  effective_type: type/Text
+- base_type: type/Integer
+  display_name: Contar
+  effective_type: type/Integer
   field_ref:
-  - field
-  - - Data WareHouse (PROD)
-    - huli_main_aurora_result
-    - appointment
-    - clinic_name
-  - base-type: type/Text
-  fk_target_field_id: null
-  id:
-  - Data WareHouse (PROD)
-  - huli_main_aurora_result
-  - appointment
-  - clinic_name
-  name: clinic_name
-  semantic_type: null
-  settings: null
-  visibility_type: normal
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
-  table.cell_column: clinic_name
 serdes/meta:
-- id: q61cd1kHGOwE6yS9vCA8J
-  label: clinicas
+- id: e1PuuWYLQR2bJBXu8Nkua
+  label: clinicas_que_contienen_la_palabra_doctor__modificada_22_enero_2025_
   model: Card
 archived_directly: false
-metabase_version: v1.51.6 (fc77ed4)
+metabase_version: v1.52.1 (5bc320b)
 source_card_id: null
 type: question
