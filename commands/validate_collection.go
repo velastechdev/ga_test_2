@@ -113,5 +113,6 @@ func validateFieldContainsSubstring(field interface{}, substring, fieldName stri
 	if !strings.Contains(fieldStr, substring) {
 		return fmt.Errorf("field '%s' does not contain the expected substring: '%s'", fieldName, substring)
 	}
-	return fmt.Errorf("AAAAAAAA")
+
+	return nil
 }
