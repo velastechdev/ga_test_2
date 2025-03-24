@@ -13,6 +13,7 @@ package main
 
 import (
 	"github/hulilabs/hp-metrics-metabase-dashboards/commands"
+	dashboad "github/hulilabs/hp-metrics-metabase-dashboards/commands/dashboard"
 	"log"
 	"os"
 )
@@ -34,6 +35,8 @@ func main() {
 	// Register commands
 	executor.RegisterCommand("export", &commands.ExportCommand{})
 	executor.RegisterCommand("import", &commands.ImportCommand{})
+	executor.RegisterCommand("get_dashboard_entity_id", &dashboad.GetDashboardEntityID{})
+	executor.RegisterCommand("get_dashboard_id", &dashboad.GetDashboardIDCommand{})
 
 	// Execute the command
 	err := executor.ExecuteCommand(commandName, params)

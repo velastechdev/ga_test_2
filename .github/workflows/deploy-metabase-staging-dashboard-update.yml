@@ -1,0 +1,113 @@
+name: Deploy Metabase Staging
+
+on:
+  push:
+    branches:
+      - '*DEPLOY-VERSION-UPDATE*'
+
+jobs:
+  deploy_metabase_staging:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.23.1'
+
+      - name: Extract ID from Branch Name
+        id: extract_id
+        run: |
+          BRANCH_NAME="${GITHUB_REF##*/}"
+          if [[ $BRANCH_NAME =~ DEPLOY-VERSION-UPDATE-([0-9]+) ]]; then
+            echo "ID found: ${BASH_REMATCH[1]}"
+            echo "DASHBOARD_ID=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            echo "id_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "ID not found."
+            echo "id_found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Export Script
+        id: export
+        env:
+          API_KEY: ${{ secrets.STAGING_API_KEY }}
+          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+          COLLECTION: ${{ vars.DEFAULT_COLLECTION }}
+        run: |
+          echo "Running Export Script..."
+          go run main.go export \
+            endpoint_url=$ENDPOINT_URL \
+            api_key=$API_KEY \
+            collection=$COLLECTION
+
+      - name: Commit and Push Exported Files to Main
+        id: commit_and_push
+        if: ${{ steps.export.outcome == 'success' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Preparing to commit and push exported serialization..."
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+        
+          git add .
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "Add exported serialization from DEPLOY-VERSION branch"
+          fi
+        
+          git fetch origin main
+          git checkout main
+        
+          git merge "${GITHUB_REF##*/}" --no-ff -m "Merge changes from ${GITHUB_REF##*/}"
+          git push origin main
+
+      - name: Delete Branch After Merge
+        if: ${{ steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Deleting branch: ${GITHUB_REF##*/}"
+          BRANCH_TO_DELETE="${GITHUB_REF##*/}"
+          if [[ "$BRANCH_TO_DELETE" == "main" ]]; then
+            echo "Not deleting the main branch."
+          else
+            curl -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${BRANCH_TO_DELETE}"
+          fi
+      
+      - name: Get Entity ID from Dashboard
+        id: get_entity_id
+        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
+        env:
+          API_KEY: ${{ secrets.STAGING_API_KEY }}
+          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
+        run: |
+          echo "Getting entity ID from dashboard..."
+          ENTITY_ID=$(go run main.go get_dashboard_entity_id \
+            endpoint_url=$ENDPOINT_URL \
+            api_key=$API_KEY \
+            dashboard_id=$DASHBOARD_ID | grep ENTITY_ID | cut -d'=' -f2)
+          echo "ENTITY_ID=$ENTITY_ID" >> $GITHUB_ENV
+
+      - name: Update Repository Variable with entity ID
+        id: update_variable
+        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Consistent token name
+          ENTITY_ID: ${{ env.ENTITY_ID }}
+        run: |
+          echo "Updating repository variable with entity ID..."
+          curl -X PATCH \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
+            -d "{\"value\":\"${ENTITY_ID}\"}"

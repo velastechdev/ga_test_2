@@ -14,7 +14,9 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"fmt"
+	"github/hulilabs/hp-metrics-metabase-dashboards/lib"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -48,7 +50,7 @@ func (e *ExportCommand) Execute(params map[string]interface{}) error {
 	url := fmt.Sprintf("%s/api/ee/serialization/export?%s", endpointURL, queryParams)
 
 	// Make HTTP request
-	resp, err := makeHTTPRequest(url, metabaseApiKey, postMethod, nil)
+	resp, err := lib.MakeHTTPRequest(url, metabaseApiKey, http.MethodPost, nil)
 	if err != nil {
 		return fmt.Errorf("HTTP request failed: %w", err)
 	}
