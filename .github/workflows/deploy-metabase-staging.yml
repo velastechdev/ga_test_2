@@ -3,7 +3,7 @@ name: Deploy Metabase Staging
 on:
   push:
     branches:
-      - '*DEPLOY-VERSION*'
+      - '*DEPLOY-VERSION'
 
 jobs:
         
