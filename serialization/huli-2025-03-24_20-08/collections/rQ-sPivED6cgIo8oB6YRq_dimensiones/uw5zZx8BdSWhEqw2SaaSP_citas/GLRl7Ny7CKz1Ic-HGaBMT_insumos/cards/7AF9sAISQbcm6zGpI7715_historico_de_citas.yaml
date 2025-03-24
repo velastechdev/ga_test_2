@@ -1,0 +1,286 @@
+name: Histórico de citas
+description: null
+entity_id: 7AF9sAISQbcm6zGpI7715
+created_at: '2025-03-24T20:08:22.758663Z'
+creator_id: christopher.diaz@huli.io
+display: line
+archived: false
+collection_id: GLRl7Ny7CKz1Ic-HGaBMT
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Data WareHouse (PROD)
+table_id:
+- Data WareHouse (PROD)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  query:
+    aggregation:
+    - - count
+    aggregation-idents:
+      0: aggregation_7AF9sAISQbcm6zGpI7715@0__0
+    breakout:
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - start_date
+      - base-type: type/DateTime
+        temporal-unit: month
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    breakout-idents:
+      0: breakout_7AF9sAISQbcm6zGpI7715@0__0
+      1: breakout_7AF9sAISQbcm6zGpI7715@0__1
+    expression-idents:
+      Rango de edad: expression_7AF9sAISQbcm6zGpI7715@0__Rango de edad
+    expressions:
+      Rango de edad:
+      - case
+      - - - - <
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0
+          - -0 - Prenatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0.0767
+          - -0-28 días - Neonatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 1
+          - 00-01 - Infancia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 5
+          - 01-05 - Niñez Temprana
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 11
+          - 06-11 - Niñez Media
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 14
+          - 12-14 - Niñez Tardía
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 17
+          - 15-17 - Adolescencia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 24
+          - 18-24 - Joven
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 44
+          - 25-44 - Adulto
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 64.9999
+          - 45-64 - Adulto Medio
+        - - - '>='
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 65
+          - 65+ - Adulto Mayor
+      - default: No Especificado
+    filter:
+    - =
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    - canceled
+    - no-show
+    - completed
+    source-table:
+    - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+  type: query
+result_metadata:
+- base_type: type/DateTime
+  coercion_strategy: null
+  description: null
+  display_name: 'Start Date: Mes'
+  effective_type: type/DateTime
+  field_ref:
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - start_date
+  - base-type: type/DateTime
+    temporal-unit: month
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - start_date
+  name: start_date
+  semantic_type: type/CreationTimestamp
+  settings: null
+  unit: month
+  visibility_type: normal
+- base_type: type/Text
+  coercion_strategy: null
+  description: null
+  display_name: Appointment Status
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - appointment_status
+  - base-type: type/Text
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - appointment_status
+  name: appointment_status
+  semantic_type: type/Category
+  settings: null
+  visibility_type: normal
+- base_type: type/Integer
+  display_name: Contar
+  effective_type: type/Integer
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - start_date
+  - appointment_status
+  graph.metrics:
+  - count
+  graph.x_axis.title_text: Fecha
+  graph.y_axis.title_text: Número de citas
+  series_settings:
+    canceled:
+      color: '#FFB300'
+      line.size: L
+      title: Cancelada
+    completed:
+      color: '#8CCE47'
+      line.size: L
+      title: Completeda
+    no-show:
+      color: '#D10057'
+      line.size: M
+      title: Paciente no se presentó
+serdes/meta:
+- id: 7AF9sAISQbcm6zGpI7715
+  label: historico_de_citas
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.52.1 (5bc320b)
+source_card_id: null
+type: question

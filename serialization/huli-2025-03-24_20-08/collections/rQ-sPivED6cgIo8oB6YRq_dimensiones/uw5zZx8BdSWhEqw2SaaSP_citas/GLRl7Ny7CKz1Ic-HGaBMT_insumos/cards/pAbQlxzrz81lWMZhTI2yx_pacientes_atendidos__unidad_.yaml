@@ -1,0 +1,221 @@
+name: Pacientes atendidos (unidad)
+description: Número total de pacientes únicos atendidos
+entity_id: pAbQlxzrz81lWMZhTI2yx
+created_at: '2025-03-24T20:08:22.671906Z'
+creator_id: christopher.diaz@huli.io
+display: scalar
+archived: false
+collection_id: GLRl7Ny7CKz1Ic-HGaBMT
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Data WareHouse (PROD)
+table_id:
+- Data WareHouse (PROD)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  query:
+    aggregation:
+    - - aggregation-options
+      - - distinct
+        - - field
+          - - Data WareHouse (PROD)
+            - huli_main_aurora_result
+            - appointment
+            - patient_id
+          - base-type: type/Integer
+      - name: Paciente único
+        display-name: Paciente único
+    - - count
+    aggregation-idents:
+      0: aggregation_pAbQlxzrz81lWMZhTI2yx@0__0
+      1: aggregation_pAbQlxzrz81lWMZhTI2yx@0__1
+    expression-idents:
+      Rango de edad: expression_pAbQlxzrz81lWMZhTI2yx@0__Rango de edad
+    expressions:
+      Rango de edad:
+      - case
+      - - - - <
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0
+          - -0 - Prenatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0.0767
+          - -0-28 días - Neonatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 1
+          - 00-01 - Infancia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 5
+          - 01-05 - Niñez Temprana
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 11
+          - 06-11 - Niñez Media
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 14
+          - 12-14 - Niñez Tardía
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 17
+          - 15-17 - Adolescencia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 24
+          - 18-24 - Joven
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 44
+          - 25-44 - Adulto
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 64.9999
+          - 45-64 - Adulto Medio
+        - - - '>='
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 65
+          - 65+ - Adulto Mayor
+      - default: No Especificado
+    filter:
+    - =
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    - completed
+    source-table:
+    - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+  type: query
+result_metadata:
+- base_type: type/Integer
+  display_name: Paciente único
+  effective_type: type/Integer
+  field_ref:
+  - aggregation
+  - 0
+  name: Paciente único
+  semantic_type: type/Quantity
+  settings: null
+- base_type: type/Integer
+  display_name: Contar
+  effective_type: type/Integer
+  field_ref:
+  - aggregation
+  - 1
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+serdes/meta:
+- id: pAbQlxzrz81lWMZhTI2yx
+  label: pacientes_atendidos__unidad_
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.52.1 (5bc320b)
+source_card_id: null
+type: question
