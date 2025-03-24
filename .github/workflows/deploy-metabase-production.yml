@@ -17,15 +17,15 @@ jobs:
         with:
           go-version: '1.23.1'
 
-      - name: Run Import Script
-        if: success()
-        env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-        run: |
-          echo "Running Import Script..."
-          echo "Endpoint URL: $ENDPOINT_URL"
-          echo "API Key: $API_KEY"
-          go run main.go import \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY
+      # - name: Run Import Script
+      #   if: success()
+      #   env:
+      #     API_KEY: ${{ secrets.STAGING_API_KEY }}
+      #     ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+      #   run: |
+      #     echo "Running Import Script..."
+      #     echo "Endpoint URL: $ENDPOINT_URL"
+      #     echo "API Key: $API_KEY"
+      #     go run main.go import \
+      #       endpoint_url=$ENDPOINT_URL \
+      #       api_key=$API_KEY
