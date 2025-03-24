@@ -1,0 +1,260 @@
+name: Histórico de distribución de citas
+description: null
+entity_id: YsSba5spLpNinWBO8FU4v
+created_at: '2025-03-24T20:08:22.758672Z'
+creator_id: christopher.diaz@huli.io
+display: pie
+archived: false
+collection_id: GLRl7Ny7CKz1Ic-HGaBMT
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Data WareHouse (PROD)
+table_id:
+- Data WareHouse (PROD)
+- huli_main_aurora_result
+- appointment
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  query:
+    aggregation:
+    - - count
+    aggregation-idents:
+      0: aggregation_YsSba5spLpNinWBO8FU4v@0__0
+    breakout:
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    breakout-idents:
+      0: breakout_YsSba5spLpNinWBO8FU4v@0__0
+    expression-idents:
+      Rango de edad: expression_YsSba5spLpNinWBO8FU4v@0__Rango de edad
+    expressions:
+      Rango de edad:
+      - case
+      - - - - <
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0
+          - -0 - Prenatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 0.0767
+          - -0-28 días - Neonatal
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 1
+          - 00-01 - Infancia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 5
+          - 01-05 - Niñez Temprana
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 11
+          - 06-11 - Niñez Media
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 14
+          - 12-14 - Niñez Tardía
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 17
+          - 15-17 - Adolescencia
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 24
+          - 18-24 - Joven
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 44
+          - 25-44 - Adulto
+        - - - <=
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 64.9999
+          - 45-64 - Adulto Medio
+        - - - '>='
+            - - datetime-diff
+              - - field
+                - - Data WareHouse (PROD)
+                  - huli_main_aurora_result
+                  - appointment
+                  - patient_birthdate
+                - base-type: type/Text
+              - - now
+              - year
+            - 65
+          - 65+ - Adulto Mayor
+      - default: No Especificado
+    filter:
+    - =
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    - completed
+    - canceled
+    - no-show
+    source-table:
+    - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+  type: query
+result_metadata:
+- base_type: type/Text
+  coercion_strategy: null
+  description: null
+  display_name: Appointment Status
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - appointment_status
+  - base-type: type/Text
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - appointment_status
+  name: appointment_status
+  semantic_type: type/Category
+  settings: null
+  visibility_type: normal
+- base_type: type/Integer
+  display_name: Contar
+  effective_type: type/Integer
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  pie.percent_visibility: inside
+  pie.rows:
+  - color: '#84BB4C'
+    defaultColor: true
+    enabled: true
+    hidden: false
+    isOther: false
+    key: completed
+    name: Completada
+    originalName: completed
+  - color: '#FFB300'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: canceled
+    name: Cancelada
+    originalName: canceled
+  - color: '#D10057'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: no-show
+    name: Paciente no se presentó
+    originalName: no-show
+serdes/meta:
+- id: YsSba5spLpNinWBO8FU4v
+  label: historico_de_distribucion_de_citas
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.52.1 (5bc320b)
+source_card_id: null
+type: question
