@@ -102,7 +102,7 @@ jobs:
         id: update_variable
         if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Consistent token name
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Consistent token name
           ENTITY_ID: ${{ env.ENTITY_ID }}
         run: |
           echo "Updating repository variable with entity ID..."
