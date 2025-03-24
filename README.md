@@ -71,7 +71,7 @@ go run main.go import endpoint_url=https://hp-metrics.huli.io/ api_key=ABCD1234
 
 2. **Deploy Production Metabase**: This step involves deploying the serialization saved in the `serialization/` directory to the production Metabase instance. The deployment process is automated through GitHub Actions workflows. This workflow is triggered when a release of this repository is done. The workflow configuration can be found in the `.github/workflows/deploy-metabase-production.yml` file.
 
-3. **Serialization Test**: This step involves testing the serialization process. The test process is automated through GitHub Actions workflows. This workflow is triggered when the Deploy Staging Metabase workflow is executed. The workflow configuration can be found in the `.github/workflows/test-serialization.yml` file.
+3. **Serialization Test**: This step involves testing the serialization process. The test process is automated through GitHub Actions workflows. This workflow is triggered every time a pull request is opened. The workflow configuration can be found in the `.github/workflows/test-serialization.yml` file.
 
 ### Workflow Permissions
 
