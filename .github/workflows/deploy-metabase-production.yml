@@ -33,12 +33,16 @@ jobs:
       - name: Check if ENTITY_ID is not empty
         if: success()
         id: check_entity_id
+        env:
+          ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
-          if [ -z "${{ vars.ENTITY_ID// }}" ]; then
-            echo "ENTITY_ID is empty, skipping subsequent steps"
+          # Trim whitespace and check if empty
+          TRIMMED_ID=$(echo "$ENTITY_ID" | xargs)
+          if [ -z "$TRIMMED_ID" ]; then
+            echo "ENTITY_ID is empty or only whitespace, skipping subsequent steps"
             echo "should_run=false" >> $GITHUB_OUTPUT
           else
-            echo "ENTITY_ID has value: ${{ vars.ENTITY_ID }}"
+            echo "ENTITY_ID has value: '$ENTITY_ID'"
             echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
