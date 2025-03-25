@@ -1,4 +1,4 @@
-name: Deploy Metabase Staging
+name: Deploy Metabase Staging Update Dashboard
 
 on:
   push:
