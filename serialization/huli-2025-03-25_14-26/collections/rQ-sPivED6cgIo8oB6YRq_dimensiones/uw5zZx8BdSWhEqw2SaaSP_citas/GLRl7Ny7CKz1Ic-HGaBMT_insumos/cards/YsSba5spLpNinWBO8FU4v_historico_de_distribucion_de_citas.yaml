@@ -1,7 +1,7 @@
-name: Citas completadas con pacientes nuevos vs recurrentes
+name: Histórico de distribución de citas
 description: null
-entity_id: jwY5i2xgVWtIfVwMmryJB
-created_at: '2025-03-24T20:08:41.250204Z'
+entity_id: YsSba5spLpNinWBO8FU4v
+created_at: '2025-03-25T14:12:34.626805Z'
 creator_id: christopher.diaz@huli.io
 display: pie
 archived: false
@@ -26,18 +26,18 @@ dataset_query:
     aggregation:
     - - count
     aggregation-idents:
-      0: aggregation_jwY5i2xgVWtIfVwMmryJB@0__0
+      0: aggregation_YsSba5spLpNinWBO8FU4v@0__0
     breakout:
     - - field
       - - Data WareHouse (PROD)
         - huli_main_aurora_result
         - appointment
-        - is_recurring_patient
-      - base-type: type/Boolean
+        - appointment_status
+      - base-type: type/Text
     breakout-idents:
-      0: breakout_jwY5i2xgVWtIfVwMmryJB@0__0
+      0: breakout_YsSba5spLpNinWBO8FU4v@0__0
     expression-idents:
-      Rango de edad: expression_jwY5i2xgVWtIfVwMmryJB@0__Rango de edad
+      Rango de edad: expression_YsSba5spLpNinWBO8FU4v@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -183,6 +183,8 @@ dataset_query:
         - appointment_status
       - base-type: type/Text
     - completed
+    - canceled
+    - no-show
     source-table:
     - Data WareHouse (PROD)
     - huli_main_aurora_result
@@ -192,22 +194,22 @@ result_metadata:
 - base_type: type/Text
   coercion_strategy: null
   description: null
-  display_name: Is Recurring Patient
+  display_name: Appointment Status
   effective_type: type/Text
   field_ref:
   - field
   - - Data WareHouse (PROD)
     - huli_main_aurora_result
     - appointment
-    - is_recurring_patient
-  - base-type: type/Boolean
+    - appointment_status
+  - base-type: type/Text
   fk_target_field_id: null
   id:
   - Data WareHouse (PROD)
   - huli_main_aurora_result
   - appointment
-  - is_recurring_patient
-  name: is_recurring_patient
+  - appointment_status
+  name: appointment_status
   semantic_type: type/Category
   settings: null
   visibility_type: normal
@@ -221,50 +223,35 @@ result_metadata:
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
+  pie.percent_visibility: inside
   pie.rows:
-  - color: '#8CCE47'
-    defaultColor: false
-    enabled: true
-    hidden: false
-    isOther: false
-    key: recurring
-    name: Recurrente
-    originalName: recurring
-  - color: '#3349A4'
-    defaultColor: false
-    enabled: true
-    hidden: false
-    isOther: false
-    key: first-time
-    name: Nuevo
-    originalName: first-time
-  - color: '#546E7A'
+  - color: '#84BB4C'
     defaultColor: true
     enabled: true
     hidden: false
     isOther: false
-    key: first-time-incomplete
-    name: first-time-incomplete
-    originalName: first-time-incomplete
-  - color: '#4F66C8'
+    key: completed
+    name: Completada
+    originalName: completed
+  - color: '#FFB300'
     defaultColor: false
     enabled: true
-    hidden: true
+    hidden: false
     isOther: false
-    key: 'false'
-    name: Nuevo
-    originalName: 'false'
-  - color: '#8CCE47'
+    key: canceled
+    name: Cancelada
+    originalName: canceled
+  - color: '#D10057'
     defaultColor: false
     enabled: true
-    hidden: true
+    hidden: false
     isOther: false
-    key: 'true'
-    name: Recurrente
-    originalName: 'true'
+    key: no-show
+    name: Paciente no se presentó
+    originalName: no-show
 serdes/meta:
-- id: jwY5i2xgVWtIfVwMmryJB
-  label: citas_completadas_con_pacientes_nuevos_vs_recurrentes
+- id: YsSba5spLpNinWBO8FU4v
+  label: historico_de_distribucion_de_citas
   model: Card
 archived_directly: false
 dashboard_id: null
