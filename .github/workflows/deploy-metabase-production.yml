@@ -30,30 +30,35 @@ jobs:
       #       endpoint_url=$ENDPOINT_URL \
       #       api_key=$API_KEY
 
-      - name: Get Entity ID from Dashboard
-        id: get_entity_id
-        if: success()
+      - name: Get Dashboard ID from Entity ID
+        id: get_dashboard_id
         env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
-          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
+          API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
+          ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
+          ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
-          echo "Fetching entity ID for dashboard: $DASHBOARD_ID"
-          OUTPUT=$(go run main.go get_dashboard_entity_id \
+          echo "Fetching dashboard ID for entity: $ENTITY_ID"
+          
+          # Run command and capture output
+          OUTPUT=$(go run main.go get_dashboard_id \
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
-            dashboard_id=$DASHBOARD_ID)
+            entity_id=$ENTITY_ID)
           
           echo "Raw output: $OUTPUT"
           
-          if ! echo "$OUTPUT" | grep -q "ENTITY_ID="; then
-            echo "::error::Failed to find ENTITY_ID in output"
+          # Verify output contains DASHBOARD_ID= pattern
+          if [[ "$OUTPUT" != *"DASHBOARD_ID="* ]]; then
+            echo "::error::Expected 'DASHBOARD_ID=' in output but got: $OUTPUT"
             exit 1
           fi
           
-          ENTITY_ID=$(echo "$OUTPUT" | grep "ENTITY_ID=" | cut -d'=' -f2)
-          echo "ENTITY_ID=$ENTITY_ID" >> $GITHUB_ENV
-          echo "Successfully extracted ENTITY_ID: $ENTITY_ID"
+          # Extract the value after DASHBOARD_ID=
+          DASHBOARD_ID="${OUTPUT#*DASHBOARD_ID=}"
+          DASHBOARD_ID="${DASHBOARD_ID%%[[:space:]]*}"  # Remove any trailing whitespace/newline
+          
+          echo "DASHBOARD_ID=$DASHBOARD_ID" >> $GITHUB_ENV
+          echo "Successfully extracted DASHBOARD_ID: $DASHBOARD_ID"
 
       - name: Cleaning Repository variable entity_id
         if: success()
