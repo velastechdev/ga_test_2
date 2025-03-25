@@ -38,12 +38,22 @@ jobs:
           ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
           ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
-          echo "Getting dashboard ID from entity..."
-          DASHBOARD_ID=$(go run main.go get_dashboard_id \
+          echo "Fetching dashboard ID from entity: $ENTITY_ID"
+          OUTPUT=$(go run main.go get_dashboard_id \
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
-            entity_id=$ENTITY_ID | grep DASHBOARD_ID | cut -d'=' -f2)
+            entity_id=$ENTITY_ID)
+          
+          echo "Raw output: $OUTPUT"
+          
+          if ! echo "$OUTPUT" | grep -q "DASHBOARD_ID="; then
+            echo "::error::Failed to find DASHBOARD_ID in output"
+            exit 1
+          fi
+          
+          DASHBOARD_ID=$(echo "$OUTPUT" | grep "DASHBOARD_ID=" | cut -d'=' -f2)
           echo "DASHBOARD_ID=$DASHBOARD_ID" >> $GITHUB_ENV
+          echo "Successfully extracted DASHBOARD_ID: $DASHBOARD_ID"
 
       - name: Cleaning Repository variable entity_id
         if: success()
