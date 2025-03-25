@@ -102,7 +102,7 @@ jobs:
         id: update_variable
         if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}  # Consistent token name
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           ENTITY_ID: ${{ env.ENTITY_ID }}
         run: |
           echo "Updating repository variable with entity ID..."
@@ -111,3 +111,26 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
             -d "{\"value\":\"${ENTITY_ID}\"}"
+      
+      - name: Call Dashboard Update Endpoint
+        id: call_dashboard_update
+        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
+        env:
+          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          MANAGER_API_URL: ${{ vars.MANAGER_API_STG_URL }}
+        run: |
+          echo "Calling dashboard update endpoint for dashboard ID: $DASHBOARD_ID"
+          curl --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
+            --header "x-api-key: $ADMIN_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data "{
+                \"name\": \"Update dashboard $DASHBOARD_ID\",
+                \"id_dashboard\": $DASHBOARD_ID
+              }"
+          
+          # Check if the curl command succeeded
+          if [ $? -ne 0 ]; then
+            echo "Failed to call dashboard update endpoint"
+            exit 1
+          fi
