@@ -78,7 +78,7 @@ jobs:
         env:
           DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          MANAGER_API_URL: ${{ vars.MANAGER_API_PROD_URL }}
+          MANAGER_API_URL: ${{ vars.MANAGER_API_PRODUCTION_URL }}
         run: |
           echo "Calling dashboard update endpoint for dashboard ID: $DASHBOARD_ID"
           curl --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
