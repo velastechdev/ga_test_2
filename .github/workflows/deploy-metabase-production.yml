@@ -38,8 +38,8 @@ jobs:
           ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
           ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
-          echo "Getting entity ID from dashboard..."
-          ENTITY_ID=$(go run main.go get_dashboard_id \
+          echo "Getting dashboard ID from entity..."
+          DASHBOARD_ID=$(go run main.go get_dashboard_id \
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
             entity_id=$ENTITY_ID | grep DASHBOARD_ID | cut -d'=' -f2)
