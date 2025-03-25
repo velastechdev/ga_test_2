@@ -101,7 +101,6 @@ jobs:
           fi
 
       - name: Cleaning Repository variable entity_id
-        if: steps.check_entity_id.outputs.should_run == 'true' && success()
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
