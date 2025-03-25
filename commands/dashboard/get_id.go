@@ -60,7 +60,7 @@ func (e *GetDashboardIDCommand) Execute(params map[string]interface{}) error {
 	}
 
 	// Print the dashboard ID
-	fmt.Printf("DASHBOARD_ID:%d\n", dashboardID)
+	fmt.Printf("DASHBOARD_ID=%d\n", dashboardID)
 
 	return nil
 }
