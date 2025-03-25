@@ -20,13 +20,13 @@ jobs:
       # - name: Run Import Script
       #   if: success()
       #   env:
-      #     API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
-      #     ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
+      #     API_KEY: ${{ secrets.PRODUCTION_API_KEYs }}
+      #     ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URLs }}
       #   run: |
       #     echo "Running Import Script..."
       #     echo "Endpoint URL: $ENDPOINT_URL"
       #     echo "API Key: $API_KEY"
-      #     go run main.go import \
+      #     go run mains.go imports \
       #       endpoint_url=$ENDPOINT_URL \
       #       api_key=$API_KEY
 
