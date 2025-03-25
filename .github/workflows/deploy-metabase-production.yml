@@ -34,8 +34,8 @@ jobs:
         id: get_dashboard_id
         if: success()
         env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+          API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
+          ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
           ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
           echo "Getting entity ID from dashboard..."
