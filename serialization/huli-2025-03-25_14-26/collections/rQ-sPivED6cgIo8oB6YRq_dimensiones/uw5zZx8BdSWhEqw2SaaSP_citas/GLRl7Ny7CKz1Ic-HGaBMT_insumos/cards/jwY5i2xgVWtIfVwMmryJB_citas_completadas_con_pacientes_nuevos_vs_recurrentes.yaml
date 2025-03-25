@@ -1,9 +1,9 @@
-name: Pacientes atendidos (unidad)
-description: Número total de pacientes únicos atendidos
-entity_id: pAbQlxzrz81lWMZhTI2yx
-created_at: '2025-03-24T20:08:41.250204Z'
+name: Citas completadas con pacientes nuevos vs recurrentes
+description: null
+entity_id: jwY5i2xgVWtIfVwMmryJB
+created_at: '2025-03-25T14:12:34.626805Z'
 creator_id: christopher.diaz@huli.io
-display: scalar
+display: pie
 archived: false
 collection_id: GLRl7Ny7CKz1Ic-HGaBMT
 collection_preview: true
@@ -24,22 +24,20 @@ dataset_query:
   database: Data WareHouse (PROD)
   query:
     aggregation:
-    - - aggregation-options
-      - - distinct
-        - - field
-          - - Data WareHouse (PROD)
-            - huli_main_aurora_result
-            - appointment
-            - patient_id
-          - base-type: type/Integer
-      - name: Paciente único
-        display-name: Paciente único
     - - count
     aggregation-idents:
-      0: aggregation_pAbQlxzrz81lWMZhTI2yx@0__0
-      1: aggregation_pAbQlxzrz81lWMZhTI2yx@0__1
+      0: aggregation_jwY5i2xgVWtIfVwMmryJB@0__0
+    breakout:
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - is_recurring_patient
+      - base-type: type/Boolean
+    breakout-idents:
+      0: breakout_jwY5i2xgVWtIfVwMmryJB@0__0
     expression-idents:
-      Rango de edad: expression_pAbQlxzrz81lWMZhTI2yx@0__Rango de edad
+      Rango de edad: expression_jwY5i2xgVWtIfVwMmryJB@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -191,28 +189,82 @@ dataset_query:
     - appointment
   type: query
 result_metadata:
-- base_type: type/Integer
-  display_name: Paciente único
-  effective_type: type/Integer
+- base_type: type/Text
+  coercion_strategy: null
+  description: null
+  display_name: Is Recurring Patient
+  effective_type: type/Text
   field_ref:
-  - aggregation
-  - 0
-  name: Paciente único
-  semantic_type: type/Quantity
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - is_recurring_patient
+  - base-type: type/Boolean
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - is_recurring_patient
+  name: is_recurring_patient
+  semantic_type: type/Category
   settings: null
+  visibility_type: normal
 - base_type: type/Integer
   display_name: Contar
   effective_type: type/Integer
   field_ref:
   - aggregation
-  - 1
+  - 0
   name: count
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
+  pie.rows:
+  - color: '#8CCE47'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: recurring
+    name: Recurrente
+    originalName: recurring
+  - color: '#3349A4'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: first-time
+    name: Nuevo
+    originalName: first-time
+  - color: '#546E7A'
+    defaultColor: true
+    enabled: true
+    hidden: false
+    isOther: false
+    key: first-time-incomplete
+    name: first-time-incomplete
+    originalName: first-time-incomplete
+  - color: '#4F66C8'
+    defaultColor: false
+    enabled: true
+    hidden: true
+    isOther: false
+    key: 'false'
+    name: Nuevo
+    originalName: 'false'
+  - color: '#8CCE47'
+    defaultColor: false
+    enabled: true
+    hidden: true
+    isOther: false
+    key: 'true'
+    name: Recurrente
+    originalName: 'true'
 serdes/meta:
-- id: pAbQlxzrz81lWMZhTI2yx
-  label: pacientes_atendidos__unidad_
+- id: jwY5i2xgVWtIfVwMmryJB
+  label: citas_completadas_con_pacientes_nuevos_vs_recurrentes
   model: Card
 archived_directly: false
 dashboard_id: null
