@@ -17,21 +17,34 @@ jobs:
         with:
           go-version: '1.23.1'
 
-      # - name: Run Import Script
-      #   if: success()
-      #   env:
-      #     API_KEY: ${{ secrets.PRODUCTION_API_KEYWW }}
-      #     ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URLWW }}
-      #   run: |
-      #     echo "Running Import Script..."
-      #     echo "Endpoint URL: $ENDPOINT_URL"
-      #     echo "API Key: $API_KEY"
-      #     go run mains.go imports \
-      #       endpoint_url=$ENDPOINT_URL \
-      #       api_key=$API_KEY
+      - name: Run Import Script
+        if: success()
+        env:
+          API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
+          ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
+        run: |
+          echo "Running Import Script..."
+          echo "Endpoint URL: $ENDPOINT_URL"
+          echo "API Key: $API_KEY"
+          go run main.go import \
+            endpoint_url=$ENDPOINT_URL \
+            api_key=$API_KEY
+
+      - name: Check if ENTITY_ID is not empty
+        if: success()
+        id: check_entity_id
+        run: |
+          if [ -z "${{ vars.ENTITY_ID// }}" ]; then
+            echo "ENTITY_ID is empty, skipping subsequent steps"
+            echo "should_run=false" >> $GITHUB_OUTPUT
+          else
+            echo "ENTITY_ID has value: ${{ vars.ENTITY_ID }}"
+            echo "should_run=true" >> $GITHUB_OUTPUT
+          fi
 
       - name: Get Dashboard ID from Entity ID
         id: get_dashboard_id
+        if: steps.check_entity_id.outputs.should_run == 'true' && success()
         env:
           API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
           ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
@@ -59,22 +72,10 @@ jobs:
           
           echo "DASHBOARD_ID=$DASHBOARD_ID" >> $GITHUB_ENV
           echo "Successfully extracted DASHBOARD_ID: $DASHBOARD_ID"
-
-      - name: Cleaning Repository variable entity_id
-        if: success()
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo "Updating repository variable with entity ID..."
-          curl -X PATCH \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
-           -d '{"value":" "}'
-      
+        
       - name: Call Dashboard Update Endpoint
         id: call_dashboard_update
-        if: success()
+        if: steps.check_entity_id.outputs.should_run == 'true' && success()
         env:
           DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
@@ -94,3 +95,15 @@ jobs:
             echo "Failed to call dashboard update endpoint"
             exit 1
           fi
+
+      - name: Cleaning Repository variable entity_id
+        if: steps.check_entity_id.outputs.should_run == 'true' && success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          echo "Updating repository variable with entity ID..."
+          curl -X PATCH \
+            -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
+            -d '{"value":" "}'
