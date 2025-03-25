@@ -70,7 +70,7 @@ jobs:
             -H "Authorization: Bearer $GITHUB_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
-            -d "{\"value\":\""}"
+            -d '{"value":""}'
       
       - name: Call Dashboard Update Endpoint
         id: call_dashboard_update
