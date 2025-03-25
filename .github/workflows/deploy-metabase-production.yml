@@ -101,6 +101,7 @@ jobs:
           fi
 
       - name: Cleaning Repository variable entity_id
+        if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: |
