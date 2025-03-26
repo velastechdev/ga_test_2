@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set Up Go
         uses: actions/setup-go@v4
@@ -31,40 +33,51 @@ jobs:
             api_key=$API_KEY \
             collection=$COLLECTION
 
-      - name: Commit and Push Exported Files to Main
+      - name: Create and checkout new branch
         if: ${{ steps.export.outcome == 'success' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_branch
         run: |
-          echo "Preparing to commit and push exported serialization..."
+          DEPLOY_BRANCH="${GITHUB_REF##*/}"
+          TEMP_BRANCH="export-${DEPLOY_BRANCH}-$(date +%s)"
+          git checkout -b $TEMP_BRANCH
+          echo "temp_branch=$TEMP_BRANCH" >> $GITHUB_OUTPUT
+          echo "deploy_branch=$DEPLOY_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Commit changes to temp branch
+        if: ${{ steps.export.outcome == 'success' }}
+        run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
-        
+          
           git add .
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "Add exported serialization from DEPLOY-VERSION branch"
+            git commit -m "Add exported serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
+            git push origin ${{ steps.create_branch.outputs.temp_branch }}
           fi
-        
-          git fetch origin main
-          git checkout main
-        
-          git merge "${GITHUB_REF##*/}" --no-ff -m "Merge changes from ${GITHUB_REF##*/}"
-          git push origin main
 
-      - name: Delete Branch After Merge
+      - name: Create Pull Request
+        if: ${{ steps.export.outcome == 'success' }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.create_branch.outputs.temp_branch }}
+          base: main
+          title: "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
+          body: "Automated PR with exported serialization"
+          delete-branch: true
+
+      - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Deleting branch: ${GITHUB_REF##*/}"
-          BRANCH_TO_DELETE="${GITHUB_REF##*/}"
-          if [[ "$BRANCH_TO_DELETE" == "main" ]]; then
+          if [[ "${{ steps.create_branch.outputs.deploy_branch }}" == "main" ]]; then
             echo "Not deleting the main branch."
           else
             curl -X DELETE \
               -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${BRANCH_TO_DELETE}"
+              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ steps.create_branch.outputs.deploy_branch }}"
           fi
