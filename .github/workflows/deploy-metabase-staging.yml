@@ -80,19 +80,25 @@ jobs:
             exit 1
           fi
 
-      # - name: Create Pull Request
-      #   if: ${{ steps.export.outcome == 'success' }}
-      #   id: create_pr
-      #   uses: peter-evans/create-pull-request@v5
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     path: ./repo
-      #     branch: ${{ steps.create_branch.outputs.temp_branch }}
-      #     base: main  # Target branch
-      #     title: "Metabase Export: ${{ steps.create_branch.outputs.deploy_branch }}"
-      #     body: "Automated PR for Metabase export changes from ${{ steps.create_branch.outputs.deploy_branch }}"
-      #     draft: false
-      #     labels: "automated"
+      - name: Create Pull Request
+        if: ${{ steps.export.outcome == 'success' }}
+        working-directory: ./repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the base branch name (the branch this was triggered from)
+          BASE_BRANCH="${{ steps.create_branch.outputs.deploy_branch }}"
+          TEMP_BRANCH="${{ steps.create_branch.outputs.temp_branch }}"
+          
+          # Create the pull request
+          gh pr create \
+            --base "$BASE_BRANCH" \
+            --head "$TEMP_BRANCH" \
+            --title "Export updates from $BASE_BRANCH" \
+            --body "Automated export of Metabase serialization
+            
+            Changes exported from branch: $BASE_BRANCH
+            Exported at: $(date)"
 
       # - name: Delete original DEPLOY-VERSION branch
       #   if: ${{ steps.export.outcome == 'success' }}
