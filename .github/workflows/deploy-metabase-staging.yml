@@ -80,30 +80,30 @@ jobs:
             exit 1
           fi
 
-      - name: Create Pull Request
-        if: ${{ steps.export.outcome == 'success' }}
-        id: create_pr
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          path: ./repo
-          branch: ${{ steps.create_branch.outputs.temp_branch }}
-          base: main  # Target branch
-          title: "Metabase Export: ${{ steps.create_branch.outputs.deploy_branch }}"
-          body: "Automated PR for Metabase export changes from ${{ steps.create_branch.outputs.deploy_branch }}"
-          draft: false
-          labels: "automated"
+      # - name: Create Pull Request
+      #   if: ${{ steps.export.outcome == 'success' }}
+      #   id: create_pr
+      #   uses: peter-evans/create-pull-request@v5
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     path: ./repo
+      #     branch: ${{ steps.create_branch.outputs.temp_branch }}
+      #     base: main  # Target branch
+      #     title: "Metabase Export: ${{ steps.create_branch.outputs.deploy_branch }}"
+      #     body: "Automated PR for Metabase export changes from ${{ steps.create_branch.outputs.deploy_branch }}"
+      #     draft: false
+      #     labels: "automated"
 
-      - name: Delete original DEPLOY-VERSION branch
-        if: ${{ steps.export.outcome == 'success' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if [[ "${{ steps.create_branch.outputs.deploy_branch }}" == "main" ]]; then
-            echo "Not deleting the main branch."
-          else
-            curl -X DELETE \
-              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ steps.create_branch.outputs.deploy_branch }}"
-          fi
+      # - name: Delete original DEPLOY-VERSION branch
+      #   if: ${{ steps.export.outcome == 'success' }}
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: |
+      #     if [[ "${{ steps.create_branch.outputs.deploy_branch }}" == "main" ]]; then
+      #       echo "Not deleting the main branch."
+      #     else
+      #       curl -X DELETE \
+      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #         -H "Accept: application/vnd.github+json" \
+      #         "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ steps.create_branch.outputs.deploy_branch }}"
+      #     fi
