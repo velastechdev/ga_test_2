@@ -82,15 +82,17 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ steps.export.outcome == 'success' }}
+        id: create_pr
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          path: ./repo
           branch: ${{ steps.create_branch.outputs.temp_branch }}
-          base: main
-          title: "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
-          body: "Automated PR with exported serialization"
-          delete-branch: false
-          commit-message: "Add exported serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
+          base: main  # Target branch
+          title: "Metabase Export: ${{ steps.create_branch.outputs.deploy_branch }}"
+          body: "Automated PR for Metabase export changes from ${{ steps.create_branch.outputs.deploy_branch }}"
+          draft: false
+          labels: "automated"
 
       - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
