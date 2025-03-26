@@ -1,0 +1,235 @@
+name: ¿Qué horario cancelan más tus pacientes?
+description: null
+entity_id: MZnrZb2Awy_NZ-cfdl4KI
+created_at: '2025-03-26T17:07:41.489482Z'
+creator_id: christopher.diaz@huli.io
+display: bar
+archived: false
+collection_id: GLRl7Ny7CKz1Ic-HGaBMT
+collection_preview: true
+collection_position: null
+query_type: native
+database_id: Data WareHouse (PROD)
+table_id: null
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters:
+- default: '0'
+  id: f20b4856-05b7-49d1-9075-a22a638f434e
+  name: Organization ID
+  slug: organization_id
+  target:
+  - variable
+  - - template-tag
+    - organization_id
+  type: number/=
+- id: cfc322ca-0008-45a1-850f-94fbbe1b2902
+  name: Date Range
+  slug: date_range
+  target:
+  - dimension
+  - - template-tag
+    - date_range
+  type: date/range
+- id: 7797a85e-44a2-4c09-a503-95d0d9e80d1f
+  name: Patient Sex
+  slug: patient_sex
+  target:
+  - variable
+  - - template-tag
+    - patient_sex
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - M
+      - Hombre
+    - - F
+      - Mujer
+  values_source_type: static-list
+- id: 32525453-a246-45e8-9eca-030e6071fe51
+  name: Tags
+  slug: tags
+  target:
+  - dimension
+  - - template-tag
+    - tags
+  type: string/=
+  values_source_config:
+    card_id: zdqbhcaieh1vn77knB85X
+    value_field:
+    - field
+    - tags
+    - base-type: type/Text
+  values_source_type: card
+- id: 66c6c93f-6976-4b7f-a411-37f7a62fdd43
+  name: Is Confirmed
+  slug: is_confirmed
+  target:
+  - variable
+  - - template-tag
+    - is_confirmed
+  type: category
+  values_query_type: list
+  values_source_config:
+    values:
+    - - '1'
+      - Sí
+    - - '0'
+      - 'No'
+  values_source_type: static-list
+- id: 6c96a449-cd5d-43d5-bcc2-a62d017d9ba5
+  name: Age Range
+  slug: age_range
+  target:
+  - variable
+  - - template-tag
+    - age_range
+  type: category
+  values_query_type: list
+  values_source_config:
+    card_id: 1oOS0j-YDFAKdKpAI54U1
+    value_field:
+    - field
+    - age_group
+    - base-type: type/Text
+  values_source_type: card
+- id: 9616eb72-c2e2-47df-82f6-5b5062c9b51f
+  name: Clinic Name
+  slug: clinic_name
+  target:
+  - dimension
+  - - template-tag
+    - clinic_name
+  type: string/=
+  values_source_config:
+    card_id: QEYx_MJGL2QfUVw4FHKom
+    value_field:
+    - field
+    - clinic_name
+    - base-type: type/Text
+  values_source_type: card
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  native:
+    query: "SELECT\n  FORMAT('%02d:00 %s', \n         CASE \n           WHEN `Hour_in_hrs` = 0 THEN 12 -- 0 hours that correspond to 12 AM\n           WHEN `Hour_in_hrs` > 12 THEN `Hour_in_hrs` - 12 -- PM hours after 12\n           ELSE `Hour_in_hrs` -- AM hours and 12 PM \n         END, \n         IF(`Hour_in_hrs` >= 12, 'PM', 'AM')) AS `Hour_in_ampm`,\n  COUNT(*) AS `count`\nFROM\n  (\n    SELECT\n        EXTRACT(hour FROM TIMESTAMP(`start_date`)) AS `Hour_in_hrs`,\n        `huli_main_aurora_result.appointment`,\n        {{snippet: field_age_range}},\n        CASE \n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 1 THEN '1'\n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 0 THEN '0'\n            ELSE NULL -- Opcional para valores inesperados (como NULL)\n        END AS is_confirmed\n    FROM `huli_main_aurora_result.appointment`\n  )\nWHERE `huli_main_aurora_result.appointment`.`appointment_status` = 'canceled'\nAND `huli_main_aurora_result.appointment`.`organization_id` = {{ organization_id }}\n[[ AND {{ date_range }} ]]\n[[ AND `huli_main_aurora_result.appointment`.`patient_sex` = {{ patient_sex }} ]]\n[[ AND {{ tags }} ]]\n[[ AND {{ clinic_name }} ]]\n[[ AND is_confirmed = {{ is_confirmed }} ]]\n[[ AND `Rango_de_edad` IN ({{ age_range }}) ]]\nGROUP BY\n  `Hour_in_ampm`, `Hour_in_hrs`\nORDER BY\n  `Hour_in_hrs`;"
+    template-tags:
+      age_range:
+        display-name: Age Range
+        id: 6c96a449-cd5d-43d5-bcc2-a62d017d9ba5
+        name: age_range
+        type: text
+      clinic_name:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - clinic_name
+        - null
+        display-name: Clinic Name
+        id: 9616eb72-c2e2-47df-82f6-5b5062c9b51f
+        name: clinic_name
+        options: null
+        type: dimension
+        widget-type: string/=
+      date_range:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - start_date
+        - null
+        display-name: Date Range
+        id: cfc322ca-0008-45a1-850f-94fbbe1b2902
+        name: date_range
+        options: null
+        type: dimension
+        widget-type: date/range
+      is_confirmed:
+        display-name: Is Confirmed
+        id: 66c6c93f-6976-4b7f-a411-37f7a62fdd43
+        name: is_confirmed
+        type: text
+      organization_id:
+        default: '0'
+        display-name: Organization ID
+        id: f20b4856-05b7-49d1-9075-a22a638f434e
+        name: organization_id
+        type: number
+        widget-type: null
+      patient_sex:
+        display-name: Patient Sex
+        id: 7797a85e-44a2-4c09-a503-95d0d9e80d1f
+        name: patient_sex
+        type: text
+      'snippet: field_age_range':
+        display-name: 'Snippet: Field Age Range'
+        id: c4e10401-f95d-42b6-8dc7-205b0f78587c
+        name: 'snippet: field_age_range'
+        snippet-id: 5w5_JWozQqewpqsyWL-H1
+        snippet-name: field_age_range
+        type: snippet
+      tags:
+        default: null
+        dimension:
+        - field
+        - - Data WareHouse (PROD)
+          - huli_main_aurora_result
+          - appointment
+          - tags
+        - null
+        display-name: Tags
+        id: 32525453-a246-45e8-9eca-030e6071fe51
+        name: tags
+        options: null
+        type: dimension
+        widget-type: string/=
+  type: native
+result_metadata:
+- base_type: type/Text
+  display_name: Hour_in_ampm
+  effective_type: type/Text
+  field_ref:
+  - field
+  - Hour_in_ampm
+  - base-type: type/Text
+  name: Hour_in_ampm
+  semantic_type: null
+- base_type: type/Integer
+  display_name: count
+  effective_type: type/Integer
+  field_ref:
+  - field
+  - count
+  - base-type: type/Integer
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Hour_in_ampm
+  graph.metrics:
+  - count
+  graph.show_values: true
+  graph.x_axis.title_text: Hora
+  graph.y_axis.title_text: Número de Citas
+  series_settings:
+    count:
+      color: '#FFB300'
+      title: Total
+serdes/meta:
+- id: MZnrZb2Awy_NZ-cfdl4KI
+  label: ¿que_horario_cancelan_mas_tus_pacientes_
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: null
+type: question
