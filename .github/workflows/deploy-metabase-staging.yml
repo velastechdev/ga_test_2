@@ -62,15 +62,15 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ steps.export.outcome == 'success' }}
-        run: |
-          cd repo  # Move back to the repository root
-          gh pr create \
-            --head ${{ steps.create_branch.outputs.temp_branch }} \
-            --base main \
-            --title "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}" \
-            --body "Automated PR with exported serialization"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ steps.create_branch.outputs.temp_branch }}
+          base: main
+          path: repo  # Critical addition
+          title: "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
+          body: "Automated PR with exported serialization"
+          delete-branch: true
 
       - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
