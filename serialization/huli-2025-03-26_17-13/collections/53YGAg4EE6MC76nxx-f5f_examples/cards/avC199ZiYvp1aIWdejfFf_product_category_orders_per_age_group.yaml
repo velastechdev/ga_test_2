@@ -1,0 +1,157 @@
+name: Product category orders per age group
+description: Shows a distribution of orders broken down by product categories across our customers' age groups
+entity_id: avC199ZiYvp1aIWdejfFf
+created_at: '2025-01-24T21:36:53.056477Z'
+creator_id: internal@metabase.com
+display: bar
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- ORDERS
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - count
+    aggregation-idents:
+      0: aggregation_avC199ZiYvp1aIWdejfFf@0__0
+    breakout:
+    - - field
+      - Age
+      - base-type: type/BigInteger
+        binning:
+          strategy: num-bins
+          num-bins: 10
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - PRODUCTS
+        - CATEGORY
+      - base-type: type/Text
+        join-alias: Products
+    breakout-idents:
+      0: breakout_avC199ZiYvp1aIWdejfFf@0__0
+      1: breakout_avC199ZiYvp1aIWdejfFf@0__1
+    joins:
+    - alias: Products
+      condition:
+      - =
+      - - field
+        - PRODUCT_ID
+        - base-type: type/Integer
+      - - field
+        - - Sample Database
+          - PUBLIC
+          - PRODUCTS
+          - ID
+        - base-type: type/BigInteger
+          join-alias: Products
+      fields: all
+      ident: join_avC199ZiYvp1aIWdejfFf@0__Products
+      source-table:
+      - Sample Database
+      - PUBLIC
+      - PRODUCTS
+      strategy: left-join
+    source-table: hjNoawcRfsDrC32g7LSOE
+  type: query
+result_metadata:
+- base_type: type/BigInteger
+  binning_info:
+    bin_width: 5.0
+    binning_strategy: num-bins
+    max_value: 65.0
+    min_value: 20.0
+    num_bins: 10
+  display_name: 'Age: 10 agrupaciones: 10 bins'
+  effective_type: type/BigInteger
+  field_ref:
+  - field
+  - Age
+  - base-type: type/BigInteger
+    binning:
+      strategy: num-bins
+      num-bins: 10
+      min-value: 20.0
+      max-value: 65.0
+      bin-width: 5.0
+  name: Age
+  source: breakout
+- base_type: type/Text
+  coercion_strategy: null
+  description: 'The type of product, valid values include: Doohicky, Gadget, Gizmo and Widget'
+  display_name: Products → Category
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Sample Database
+    - PUBLIC
+    - PRODUCTS
+    - CATEGORY
+  - base-type: type/Text
+    join-alias: Products
+  fk_target_field_id: null
+  id:
+  - Sample Database
+  - PUBLIC
+  - PRODUCTS
+  - CATEGORY
+  name: CATEGORY
+  nfc_path: null
+  parent_id: null
+  position: 3
+  semantic_type: type/Category
+  settings: null
+  source: breakout
+  source_alias: Products
+  table_id:
+  - Sample Database
+  - PUBLIC
+  - PRODUCTS
+  visibility_type: normal
+- aggregation_index: 0
+  base_type: type/Integer
+  display_name: Count
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+  source: aggregation
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Age
+  - CATEGORY
+  graph.metrics:
+  - count
+  graph.series_order: null
+  graph.series_order_dimension: null
+  graph.show_values: true
+  graph.x_axis.axis_enabled: true
+  graph.x_axis.labels_enabled: true
+  graph.x_axis.scale: ordinal
+  graph.y_axis.auto_range: true
+  stackable.stack_type: stacked
+  table.cell_column: SUBTOTAL
+serdes/meta:
+- id: avC199ZiYvp1aIWdejfFf
+  label: product_category_orders_per_age_group
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: hjNoawcRfsDrC32g7LSOE
+type: question

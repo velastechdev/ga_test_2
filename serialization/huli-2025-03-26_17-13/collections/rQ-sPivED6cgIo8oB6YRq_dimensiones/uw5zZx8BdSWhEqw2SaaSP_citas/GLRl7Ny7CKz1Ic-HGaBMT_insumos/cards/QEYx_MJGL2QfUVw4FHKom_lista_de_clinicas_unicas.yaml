@@ -1,0 +1,50 @@
+name: Lista de clínicas únicas
+description: null
+entity_id: QEYx_MJGL2QfUVw4FHKom
+created_at: '2024-12-12T18:07:56.432205Z'
+creator_id: christopher.diaz@huli.io
+display: table
+archived: false
+collection_id: GLRl7Ny7CKz1Ic-HGaBMT
+collection_preview: true
+collection_position: null
+query_type: native
+database_id: Data WareHouse (PROD)
+table_id: null
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Data WareHouse (PROD)
+  native:
+    query: |-
+      SELECT DISTINCT(clinic_name)
+      FROM `huli_main_aurora_result.appointment`
+      ORDER BY clinic_name ASC;
+    template-tags: {}
+  type: native
+result_metadata:
+- base_type: type/Text
+  display_name: clinic_name
+  effective_type: type/Text
+  field_ref:
+  - field
+  - clinic_name
+  - base-type: type/Text
+  name: clinic_name
+  semantic_type: null
+visualization_settings:
+  column_settings: null
+  table.pivot_column: clinic_name
+serdes/meta:
+- id: QEYx_MJGL2QfUVw4FHKom
+  label: lista_de_clinicas_unicas
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: null
+type: question

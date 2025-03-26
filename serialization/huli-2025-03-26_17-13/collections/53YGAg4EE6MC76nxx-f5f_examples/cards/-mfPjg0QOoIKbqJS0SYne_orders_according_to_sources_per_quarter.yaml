@@ -1,0 +1,165 @@
+name: Orders according to sources per quarter
+description: Orders placed per quarter broken down by source and formatted to highlight best and worst quarters
+entity_id: -mfPjg0QOoIKbqJS0SYne
+created_at: '2025-01-24T21:36:53.061428Z'
+creator_id: internal@metabase.com
+display: pivot
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- ORDERS
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - sum
+      - - field
+        - - Sample Database
+          - PUBLIC
+          - ORDERS
+          - SUBTOTAL
+        - base-type: type/Float
+    aggregation-idents:
+      0: aggregation_-mfPjg0QOoIKbqJS0SYne@0__0
+    breakout:
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - PEOPLE
+        - SOURCE
+      - base-type: type/Text
+        source-field:
+        - Sample Database
+        - PUBLIC
+        - ORDERS
+        - USER_ID
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - ORDERS
+        - CREATED_AT
+      - base-type: type/DateTime
+        temporal-unit: quarter
+    breakout-idents:
+      0: breakout_-mfPjg0QOoIKbqJS0SYne@0__0
+      1: breakout_-mfPjg0QOoIKbqJS0SYne@0__1
+    filter:
+    - time-interval
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - ORDERS
+        - CREATED_AT
+      - base-type: type/DateTime
+    - -24
+    - month
+    source-table:
+    - Sample Database
+    - PUBLIC
+    - ORDERS
+  type: query
+result_metadata:
+- base_type: type/Integer
+  coercion_strategy: null
+  description: 'The channel through which we acquired this user. Valid values include: Affiliate, Facebook, Google, Organic and Twitter'
+  display_name: pivot-grouping
+  effective_type: type/Text
+  field_ref:
+  - expression
+  - pivot-grouping
+  fk_target_field_id: null
+  id:
+  - Sample Database
+  - PUBLIC
+  - PEOPLE
+  - SOURCE
+  name: SOURCE
+  semantic_type: null
+  settings: null
+  visibility_type: normal
+- base_type: type/Float
+  coercion_strategy: null
+  description: The date and time an order was submitted.
+  display_name: Suma de Subtotal
+  effective_type: type/DateTime
+  field_ref:
+  - aggregation
+  - 0
+  fk_target_field_id: null
+  id:
+  - Sample Database
+  - PUBLIC
+  - ORDERS
+  - CREATED_AT
+  name: CREATED_AT
+  semantic_type: null
+  settings: null
+  visibility_type: normal
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - CREATED_AT
+  - SOURCE
+  graph.metrics:
+  - sum
+  graph.series_labels:
+  - null
+  pivot_table.column_split:
+    columns:
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - PEOPLE
+        - SOURCE
+      - base-type: type/Text
+        source-field:
+        - Sample Database
+        - PUBLIC
+        - ORDERS
+        - USER_ID
+    rows:
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - ORDERS
+        - CREATED_AT
+      - base-type: type/DateTime
+        temporal-unit: quarter
+    values:
+    - - aggregation
+      - 0
+  pivot_table.column_widths:
+    leftHeaderWidths:
+    - 141
+    totalLeftHeaderWidths: 141
+    valueHeaderWidths: {}
+  stackable.stack_type: stacked
+  table.column_formatting:
+  - color: '#A7D07C'
+    columns:
+    - sum
+    highlight_row: false
+    operator: '>'
+    type: single
+    value: 20000
+serdes/meta:
+- id: -mfPjg0QOoIKbqJS0SYne
+  label: orders_according_to_sources_per_quarter
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: null
+type: question

@@ -1,0 +1,85 @@
+name: Buyers by age group
+description: Shows a distribution of our customers in age groups
+entity_id: qj0jT7SXwEUezz1wSjtaZ
+created_at: '2025-01-24T21:36:53.058913Z'
+creator_id: internal@metabase.com
+display: bar
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- PEOPLE
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - count
+    aggregation-idents:
+      0: aggregation_qj0jT7SXwEUezz1wSjtaZ@0__0
+    breakout:
+    - - field
+      - Age
+      - base-type: type/BigInteger
+        binning:
+          strategy: num-bins
+          num-bins: 10
+    breakout-idents:
+      0: breakout_qj0jT7SXwEUezz1wSjtaZ@0__0
+    source-table: lY4hbjNofxepxQGRhJa0s
+  type: query
+result_metadata:
+- base_type: type/Decimal
+  display_name: Age
+  effective_type: type/Decimal
+  field_ref:
+  - field
+  - Age
+  - base-type: type/BigInteger
+    binning:
+      strategy: num-bins
+      num-bins: 10
+      min-value: 20
+      max-value: 65
+      bin-width: 5
+  name: Age
+  semantic_type: null
+- base_type: type/BigInteger
+  display_name: Count
+  effective_type: type/BigInteger
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Age
+  graph.metrics:
+  - count
+  graph.series_order: null
+  graph.series_order_dimension: null
+  graph.y_axis.title_text: Buyers
+  series_settings:
+    count:
+      color: '#A989C5'
+serdes/meta:
+- id: qj0jT7SXwEUezz1wSjtaZ
+  label: buyers_by_age_group
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: lY4hbjNofxepxQGRhJa0s
+type: question

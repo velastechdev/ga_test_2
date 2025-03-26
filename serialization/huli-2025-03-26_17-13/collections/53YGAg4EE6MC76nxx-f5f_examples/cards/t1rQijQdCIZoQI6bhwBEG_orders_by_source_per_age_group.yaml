@@ -1,0 +1,157 @@
+name: Orders by source per age group
+description: Shows a distribution of orders broken down by source across our customers' age groups
+entity_id: t1rQijQdCIZoQI6bhwBEG
+created_at: '2025-01-24T21:36:53.067215Z'
+creator_id: internal@metabase.com
+display: bar
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- ORDERS
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - count
+    aggregation-idents:
+      0: aggregation_t1rQijQdCIZoQI6bhwBEG@0__0
+    breakout:
+    - - field
+      - Age
+      - base-type: type/BigInteger
+        binning:
+          strategy: num-bins
+          num-bins: 10
+    - - field
+      - - Sample Database
+        - PUBLIC
+        - PEOPLE
+        - SOURCE
+      - base-type: type/Text
+        join-alias: People - User
+    breakout-idents:
+      0: breakout_t1rQijQdCIZoQI6bhwBEG@0__0
+      1: breakout_t1rQijQdCIZoQI6bhwBEG@0__1
+    joins:
+    - alias: People - User
+      condition:
+      - =
+      - - field
+        - USER_ID
+        - base-type: type/Integer
+      - - field
+        - - Sample Database
+          - PUBLIC
+          - PEOPLE
+          - ID
+        - base-type: type/BigInteger
+          join-alias: People - User
+      fields: all
+      ident: join_t1rQijQdCIZoQI6bhwBEG@0__People - User
+      source-table:
+      - Sample Database
+      - PUBLIC
+      - PEOPLE
+      strategy: left-join
+    source-table: hjNoawcRfsDrC32g7LSOE
+  type: query
+result_metadata:
+- base_type: type/BigInteger
+  binning_info:
+    bin_width: 5.0
+    binning_strategy: num-bins
+    max_value: 65.0
+    min_value: 20.0
+    num_bins: 10
+  display_name: 'Age: 10 agrupaciones: 10 bins'
+  effective_type: type/BigInteger
+  field_ref:
+  - field
+  - Age
+  - base-type: type/BigInteger
+    binning:
+      strategy: num-bins
+      num-bins: 10
+      min-value: 20.0
+      max-value: 65.0
+      bin-width: 5.0
+  name: Age
+  source: breakout
+- base_type: type/Text
+  coercion_strategy: null
+  description: 'The channel through which we acquired this user. Valid values include: Affiliate, Facebook, Google, Organic and Twitter'
+  display_name: People - User → Source
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Sample Database
+    - PUBLIC
+    - PEOPLE
+    - SOURCE
+  - base-type: type/Text
+    join-alias: People - User
+  fk_target_field_id: null
+  id:
+  - Sample Database
+  - PUBLIC
+  - PEOPLE
+  - SOURCE
+  name: SOURCE
+  nfc_path: null
+  parent_id: null
+  position: 8
+  semantic_type: type/Source
+  settings: null
+  source: breakout
+  source_alias: People - User
+  table_id:
+  - Sample Database
+  - PUBLIC
+  - PEOPLE
+  visibility_type: normal
+- aggregation_index: 0
+  base_type: type/Integer
+  display_name: Count
+  field_ref:
+  - aggregation
+  - 0
+  name: count
+  semantic_type: type/Quantity
+  source: aggregation
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Age
+  - SOURCE
+  graph.metrics:
+  - count
+  graph.series_order: null
+  graph.series_order_dimension: null
+  graph.show_values: true
+  graph.x_axis.axis_enabled: true
+  graph.x_axis.labels_enabled: true
+  graph.x_axis.scale: ordinal
+  graph.y_axis.auto_range: true
+  stackable.stack_type: stacked
+  table.cell_column: SUBTOTAL
+serdes/meta:
+- id: t1rQijQdCIZoQI6bhwBEG
+  label: orders_by_source_per_age_group
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: hjNoawcRfsDrC32g7LSOE
+type: question
