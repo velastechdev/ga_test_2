@@ -70,7 +70,7 @@ jobs:
           path: repo  # Critical addition
           title: "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
           body: "Automated PR with exported serialization"
-          delete-branch: true
+          delete-branch: false
 
       - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
