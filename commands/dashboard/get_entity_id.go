@@ -8,7 +8,7 @@
  *
  * (c) Huli Inc
  */
-package dashboad
+package dashboard
 
 import (
 	"encoding/json"
@@ -18,9 +18,17 @@ import (
 	"strconv"
 )
 
+type DashboardEntity struct {
+	EntityID string `json:"entity_id"`
+	ID       int    `json:"id"`
+}
+
 type GetDashboardEntityID struct{}
 
-// Execute runs the export command
+// GetDashboardEntityIDCommand gets the dashboard entity ID from the dashboard ID
+// Dashboard ID is the identifier used in url to access the dashboard
+// Entity ID is the unique identifier for the dashboard,
+// is usefull to get the dashboard ID from different metabase instances
 func (e *GetDashboardEntityID) Execute(params map[string]interface{}) error {
 	// Retrieve parameters
 	endpointURL, metabaseApiKey, dashboardID, err := e.retrieveParams(params)
@@ -38,10 +46,10 @@ func (e *GetDashboardEntityID) Execute(params map[string]interface{}) error {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to fetch data from Metabase, status code: %d", resp.StatusCode)
+		return fmt.Errorf("failed to get dashboard information from Metabase, status code: %d", resp.StatusCode)
 	}
 
-	var result Dashboard
+	var result DashboardEntity
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return fmt.Errorf("failed to decode response: %w", err)
 	}

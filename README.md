@@ -89,9 +89,9 @@ Set up the required secrets and variables for your repository:
 
 Repository Secrets:
 
-- `STAGING_API_KEY`: The API key required to authenticate with the staging Metabase instance.
+- `METABASE_STAGING_API_KEY`: The API key required to authenticate with the staging Metabase instance.
 
-- `PRODUCTION_API_KEY`: The API key required to authenticate with the production Metabase instance.
+- `METABASE_PRODUCTION_API_KEY`: The API key required to authenticate with the production Metabase instance.
 
 Repository Variables:
 

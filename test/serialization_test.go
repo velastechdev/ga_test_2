@@ -25,10 +25,10 @@ import (
 // of the success of validating that a collection name and description were modified from staging to production
 func TestSerializationIntegration(t *testing.T) {
 	// Retrieve required environment variables
-	stgApiEndpoint := mustGetEnv("STAGING_ENDPOINT_URL", t)
-	stgApiKey := mustGetEnv("STAGING_API_KEY", t)
-	prodApiEndpoint := mustGetEnv("PRODUCTION_ENDPOINT_URL", t)
-	prodApiKey := mustGetEnv("PRODUCTION_API_KEY", t)
+	stgApiEndpoint := mustGetEnv("METABASE_STAGING_ENDPOINT_URL", t)
+	stgApiKey := mustGetEnv("METABASE_STAGING_API_KEY", t)
+	prodApiEndpoint := mustGetEnv("METABASE_PRODUCTION_ENDPOINT_URL", t)
+	prodApiKey := mustGetEnv("METABASE_PRODUCTION_API_KEY", t)
 	// The collection ID used in the Metabase URL
 	collectionID := mustGetEnv("TEST_COLLECTION_ID", t)
 

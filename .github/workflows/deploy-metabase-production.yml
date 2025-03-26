@@ -17,20 +17,24 @@ jobs:
         with:
           go-version: '1.23.1'
 
-      # - name: Run Import Script
-      #   if: success()
-      #   env:
-      #     API_KEY: ${{ secrets.PRODUCTION_API_KEYs }}
-      #     ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URLs }}
-      #   run: |
-      #     echo "Running Import Script..."
-      #     echo "Endpoint URL: $ENDPOINT_URL"
-      #     echo "API Key: $API_KEY"
-      #     go run mains.go imports \
-      #       endpoint_url=$ENDPOINT_URL \
-      #       api_key=$API_KEY
+      - name: Run Import Script
+        if: success()
+        env:
+          API_KEY: ${{ secrets.METABASE_PRODUCTION_API_KEY }}
+          ENDPOINT_URL: ${{ vars.METABASE_PRODUCTION_ENDPOINT_URL }}
+        run: |
+          echo "Running Import Script..."
+          echo "Endpoint URL: $ENDPOINT_URL"
+          echo "API Key: $API_KEY"
+          go run main.go import \
+            endpoint_url=$ENDPOINT_URL \
+            api_key=$API_KEY
 
-      - name: Check if ENTITY_ID is not empty
+      # Check if the ENTITY_ID is available from the repository variable
+      # ENTITY_ID is the dashboard identifier that we want to update
+      # It is used to fetch the dashboard ID from Metabase
+      # If the ENTITY_ID is empty or only whitespace, skip the subsequent steps
+      - name: Check if a Metabase Dashboard ENTITY_ID is available
         if: success()
         id: check_entity_id
         env:
@@ -46,12 +50,14 @@ jobs:
             echo "should_run=true" >> $GITHUB_OUTPUT
           fi
 
+      # If the ENTITY_ID is available, fetch the dashboard ID from Metabase
+      # The dashboard ID is necessary to update the dashboard via Manager API.
       - name: Get Dashboard ID from Entity ID
         id: get_dashboard_id
         if: steps.check_entity_id.outputs.should_run == 'true' && success()
         env:
-          API_KEY: ${{ secrets.PRODUCTION_API_KEY }}
-          ENDPOINT_URL: ${{ vars.PRODUCTION_ENDPOINT_URL }}
+          API_KEY: ${{ secrets.METABASE_PRODUCTION_API_KEY }}
+          ENDPOINT_URL: ${{ vars.METABASE_PRODUCTION_ENDPOINT_URL }}
           ENTITY_ID: ${{ vars.ENTITY_ID }}
         run: |
           echo "Fetching dashboard ID for entity: $ENTITY_ID"

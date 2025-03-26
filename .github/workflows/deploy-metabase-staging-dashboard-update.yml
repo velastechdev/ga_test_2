@@ -1,4 +1,4 @@
-name: Deploy Metabase Staging Update Dashboard
+name: Deploy Metabase Staging Dashboard Update
 
 on:
   push:
@@ -34,8 +34,8 @@ jobs:
       - name: Run Export Script
         id: export
         env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+          API_KEY: ${{ secrets.METABASE_STAGING_API_KEY }}
+          ENDPOINT_URL: ${{ vars.METABASE_STAGING_ENDPOINT_URL }}
           COLLECTION: ${{ vars.DEFAULT_COLLECTION }}
         run: |
           echo "Running Export Script..."
@@ -83,12 +83,15 @@ jobs:
               "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${BRANCH_TO_DELETE}"
           fi
       
+      # Retrieve the ENTITY_ID associated with the dashboard.
+      # ENTITY_ID is a unique identifier that links the dashboard to its respective entity in Metabase.
+      # This ID will later be used in the "Deploy Metabase Production" workflow to fetch the dashboard ID.
       - name: Get Entity ID from Dashboard
         id: get_entity_id
         if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
         env:
-          API_KEY: ${{ secrets.STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.STAGING_ENDPOINT_URL }}
+          API_KEY: ${{ secrets.METABASE_STAGING_API_KEY }}
+          ENDPOINT_URL: ${{ vars.METABASE_STAGING_ENDPOINT_URL }}
           DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
         run: |
           echo "Getting entity ID from dashboard..."
@@ -112,7 +115,7 @@ jobs:
             "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
             -d "{\"value\":\"${ENTITY_ID}\"}"
       
-      - name: Call Dashboard Update Endpoint
+      - name: Set the new dashboard id to Huli users
         id: call_dashboard_update
         if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
         env:
