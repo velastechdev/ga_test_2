@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          path: 'repo'  # Isolate in subdirectory
+          path: 'repo'  # Adding path to isolate workspace
 
       - name: Set Up Go
         uses: actions/setup-go@v4
@@ -23,16 +23,26 @@ jobs:
 
       - name: Run Export Script
         id: export
-        working-directory: ./repo
+        working-directory: ./repo  # Run in the checked out directory
         env:
           API_KEY: ${{ secrets.METABASE_STAGING_API_KEY }}
           ENDPOINT_URL: ${{ vars.METABASE_STAGING_ENDPOINT_URL }}
           COLLECTION: ${{ vars.DEFAULT_COLLECTION }}
         run: |
+          echo "Current directory: $(pwd)"
+          echo "Files before export:"
+          ls -la
+          
+          echo "Running Export Script..."
           go run main.go export \
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY \
             collection=$COLLECTION
+          
+          echo "Files after export:"
+          ls -la
+          echo "Git status:"
+          git status --porcelain
 
       - name: Create and checkout new branch
         if: ${{ steps.export.outcome == 'success' }}
@@ -51,12 +61,22 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions Bot"
           git config --global user.email "actions@github.com"
+          
+          # Debugging output
+          echo "Git status before add:"
+          git status --porcelain
+          
           git add .
+          
+          echo "Git status after add:"
+          git status --porcelain
+          
           if ! git diff --cached --quiet; then
             git commit -m "Add exported serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
             git push origin ${{ steps.create_branch.outputs.temp_branch }}
           else
             echo "No changes to commit."
+            # Fail the step if no changes were detected
             exit 1
           fi
 
@@ -67,10 +87,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: ${{ steps.create_branch.outputs.temp_branch }}
           base: main
-          path: repo  # Critical addition
           title: "Export serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
           body: "Automated PR with exported serialization"
           delete-branch: false
+          commit-message: "Add exported serialization from ${{ steps.create_branch.outputs.deploy_branch }}"
 
       - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
