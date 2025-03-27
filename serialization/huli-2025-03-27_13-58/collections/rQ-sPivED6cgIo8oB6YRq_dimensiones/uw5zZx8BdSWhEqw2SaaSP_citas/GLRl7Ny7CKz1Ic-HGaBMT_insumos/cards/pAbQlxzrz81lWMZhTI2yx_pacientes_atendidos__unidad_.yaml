@@ -1,7 +1,7 @@
 name: Pacientes atendidos (unidad)
 description: Número total de pacientes únicos atendidos
 entity_id: pAbQlxzrz81lWMZhTI2yx
-created_at: '2025-03-26T17:07:41.691218Z'
+created_at: '2025-03-26T18:09:43.933359Z'
 creator_id: christopher.diaz@huli.io
 display: scalar
 archived: false
