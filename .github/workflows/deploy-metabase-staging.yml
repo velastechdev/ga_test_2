@@ -80,40 +80,25 @@ jobs:
             exit 1
           fi
 
-      - name: Create Pull Request
+      - name: Create Pull Request to Main
         if: ${{ steps.export.outcome == 'success' }}
         id: create-pr
         working-directory: ./repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Get the base branch name (the branch this was triggered from)
-          BASE_BRANCH="${{ steps.create_branch.outputs.deploy_branch }}"
-          TEMP_BRANCH="${{ steps.create_branch.outputs.temp_branch }}"
-          
-          # Create the pull request and capture the PR number
+          # Create PR to main branch
           PR_NUMBER=$(gh pr create \
-            --base "$BASE_BRANCH" \
-            --head "$TEMP_BRANCH" \
-            --title "Export updates from $BASE_BRANCH" \
+            --base main \
+            --head "${{ steps.create_branch.outputs.temp_branch }}" \
+            --title "Export updates to Main" \
             --body "Automated export of Metabase serialization
             
-            Changes exported from branch: $BASE_BRANCH
+            Changes exported from branch: ${{ steps.create_branch.outputs.deploy_branch }}
             Exported at: $(date)")
           
-          # Output the PR number for use in next steps
+          # Output the PR number for potential future use
           echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
-  
-      - name: Merge Pull Request
-        if: ${{ steps.create-pr.outcome == 'success' }}
-        working-directory: ./repo
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Merge the pull request
-          gh pr merge ${{ steps.create-pr.outputs.pr_number }} \
-            --merge \
-            --delete-branch
 
       - name: Delete original DEPLOY-VERSION branch
         if: ${{ steps.export.outcome == 'success' }}
