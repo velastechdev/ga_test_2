@@ -1,9 +1,9 @@
-name: Histórico de citas
-description: null
-entity_id: 7AF9sAISQbcm6zGpI7715
-created_at: '2025-03-26T18:09:43.972654Z'
+name: Pacientes atendidos (unidad)
+description: Número total de pacientes únicos atendidos
+entity_id: pAbQlxzrz81lWMZhTI2yx
+created_at: '2025-03-27T14:00:29.441056Z'
 creator_id: christopher.diaz@huli.io
-display: line
+display: scalar
 archived: false
 collection_id: GLRl7Ny7CKz1Ic-HGaBMT
 collection_preview: true
@@ -24,28 +24,22 @@ dataset_query:
   database: Data WareHouse (PROD)
   query:
     aggregation:
+    - - aggregation-options
+      - - distinct
+        - - field
+          - - Data WareHouse (PROD)
+            - huli_main_aurora_result
+            - appointment
+            - patient_id
+          - base-type: type/Integer
+      - name: Paciente único
+        display-name: Paciente único
     - - count
     aggregation-idents:
-      0: aggregation_7AF9sAISQbcm6zGpI7715@0__0
-    breakout:
-    - - field
-      - - Data WareHouse (PROD)
-        - huli_main_aurora_result
-        - appointment
-        - start_date
-      - base-type: type/DateTime
-        temporal-unit: month
-    - - field
-      - - Data WareHouse (PROD)
-        - huli_main_aurora_result
-        - appointment
-        - appointment_status
-      - base-type: type/Text
-    breakout-idents:
-      0: breakout_7AF9sAISQbcm6zGpI7715@0__0
-      1: breakout_7AF9sAISQbcm6zGpI7715@0__1
+      0: aggregation_pAbQlxzrz81lWMZhTI2yx@0__0
+      1: aggregation_pAbQlxzrz81lWMZhTI2yx@0__1
     expression-idents:
-      Rango de edad: expression_7AF9sAISQbcm6zGpI7715@0__Rango de edad
+      Rango de edad: expression_pAbQlxzrz81lWMZhTI2yx@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -190,8 +184,6 @@ dataset_query:
         - appointment
         - appointment_status
       - base-type: type/Text
-    - canceled
-    - no-show
     - completed
     source-table:
     - Data WareHouse (PROD)
@@ -199,85 +191,28 @@ dataset_query:
     - appointment
   type: query
 result_metadata:
-- base_type: type/DateTime
-  coercion_strategy: null
-  description: null
-  display_name: 'Start Date: Month'
-  effective_type: type/DateTime
+- base_type: type/Integer
+  display_name: Paciente único
+  effective_type: type/Integer
   field_ref:
-  - field
-  - - Data WareHouse (PROD)
-    - huli_main_aurora_result
-    - appointment
-    - start_date
-  - base-type: type/DateTime
-    temporal-unit: month
-  fk_target_field_id: null
-  id:
-  - Data WareHouse (PROD)
-  - huli_main_aurora_result
-  - appointment
-  - start_date
-  name: start_date
-  semantic_type: type/CreationTimestamp
+  - aggregation
+  - 0
+  name: Paciente único
+  semantic_type: type/Quantity
   settings: null
-  unit: month
-  visibility_type: normal
-- base_type: type/Text
-  coercion_strategy: null
-  description: null
-  display_name: Appointment Status
-  effective_type: type/Text
-  field_ref:
-  - field
-  - - Data WareHouse (PROD)
-    - huli_main_aurora_result
-    - appointment
-    - appointment_status
-  - base-type: type/Text
-  fk_target_field_id: null
-  id:
-  - Data WareHouse (PROD)
-  - huli_main_aurora_result
-  - appointment
-  - appointment_status
-  name: appointment_status
-  semantic_type: type/Category
-  settings: null
-  visibility_type: normal
 - base_type: type/Integer
   display_name: Count
   effective_type: type/Integer
   field_ref:
   - aggregation
-  - 0
+  - 1
   name: count
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
-  graph.dimensions:
-  - start_date
-  - appointment_status
-  graph.metrics:
-  - count
-  graph.x_axis.title_text: Fecha
-  graph.y_axis.title_text: Número de citas
-  series_settings:
-    canceled:
-      color: '#FFB300'
-      line.size: L
-      title: Cancelada
-    completed:
-      color: '#8CCE47'
-      line.size: L
-      title: Completeda
-    no-show:
-      color: '#D10057'
-      line.size: M
-      title: Paciente no se presentó
 serdes/meta:
-- id: 7AF9sAISQbcm6zGpI7715
-  label: historico_de_citas
+- id: pAbQlxzrz81lWMZhTI2yx
+  label: pacientes_atendidos__unidad_
   model: Card
 archived_directly: false
 dashboard_id: null
