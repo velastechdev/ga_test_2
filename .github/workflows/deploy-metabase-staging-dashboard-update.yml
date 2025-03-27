@@ -18,17 +18,18 @@ jobs:
         with:
           go-version: '1.23.1'
 
-      - name: Extract ID from Branch Name
+      - name: Extract Dashboard ID
         id: extract_id
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           if [[ $BRANCH_NAME =~ DEPLOY-VERSION-UPDATE-([0-9]+) ]]; then
-            echo "ID found: ${BASH_REMATCH[1]}"
-            echo "DASHBOARD_ID=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            DASHBOARD_ID="${BASH_REMATCH[1]}"
+            echo "Dashboard ID: $DASHBOARD_ID"
+            echo "DASHBOARD_ID=$DASHBOARD_ID" >> $GITHUB_OUTPUT
             echo "id_found=true" >> $GITHUB_OUTPUT
           else
-            echo "ID not found."
-            echo "id_found=false" >> $GITHUB_OUTPUT
+            echo "Error: Invalid branch name format. Expected DEPLOY-VERSION-UPDATE-{number}"
+            exit 1
           fi
 
       - name: Run Export Script
@@ -42,19 +43,19 @@ jobs:
             api_key=$API_KEY \
             collection=$COLLECTION
 
-      - name: Commit changes
+      - name: Commit and Push Changes
         run: |
-          git config --global user.name "GitHub Actions Bot"
-          git config --global user.email "actions@github.com"
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
           
           git add .
           
           if ! git diff --cached --quiet; then
-            git commit -m "Add exported serialization from ${GITHUB_REF##*/}"
+            git commit -m "Update Metabase dashboard ${{ steps.extract_id.outputs.DASHBOARD_ID }}"
             git push origin ${GITHUB_REF##*/}
           else
             echo "No changes to commit."
-            exit 1
+            exit 0
           fi
           
       - name: Create Pull Request to Main
@@ -76,57 +77,21 @@ jobs:
           echo "🔗 Pull Request URL: $PR_URL"
           echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT
       
-      # Retrieve the ENTITY_ID associated with the dashboard.
-      # ENTITY_ID is a unique identifier that links the dashboard to its respective entity in Metabase.
-      # This ID will later be used in the "Deploy Metabase Production" workflow to fetch the dashboard ID.
-      - name: Get Entity ID from Dashboard
-        id: get_entity_id
-        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
+      - name: Update Dashboard Access
         env:
-          API_KEY: ${{ secrets.METABASE_STAGING_API_KEY }}
-          ENDPOINT_URL: ${{ vars.METABASE_STAGING_ENDPOINT_URL }}
-          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
-        run: |
-          echo "Getting entity ID from dashboard..."
-          ENTITY_ID=$(go run main.go get_dashboard_entity_id \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY \
-            dashboard_id=$DASHBOARD_ID | grep ENTITY_ID | cut -d'=' -f2)
-          echo "ENTITY_ID=$ENTITY_ID" >> $GITHUB_ENV
-
-      - name: Update Repository Variable with entity ID
-        id: update_variable
-        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          ENTITY_ID: ${{ env.ENTITY_ID }}
-        run: |
-          echo "Updating repository variable with entity ID..."
-          curl -X PATCH \
-            -H "Authorization: Bearer $GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
-            -d "{\"value\":\"${ENTITY_ID}\"}"
-      
-      - name: Set the new dashboard id to Huli users
-        id: call_dashboard_update
-        if: steps.extract_id.outputs.id_found == 'true' && steps.export.outcome == 'success' && steps.commit_and_push.outcome == 'success'
-        env:
-          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
+          DASHBOARD_ID: ${{ steps.extract_id.outputs.DASHBOARD_ID }}
           ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
           MANAGER_API_URL: ${{ vars.MANAGER_API_STG_URL }}
         run: |
-          echo "Calling dashboard update endpoint for dashboard ID: $DASHBOARD_ID"
-          curl --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
+          response=$(curl -s -o /dev/null -w "%{http_code}" --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
             --header "x-api-key: $ADMIN_API_KEY" \
             --header 'Content-Type: application/json' \
             --data "{
                 \"name\": \"Update dashboard $DASHBOARD_ID\",
                 \"id_dashboard\": $DASHBOARD_ID
-              }"
+            }")
           
-          # Check if the curl command succeeded
-          if [ $? -ne 0 ]; then
-            echo "Failed to call dashboard update endpoint"
+          if [ "$response" -ne 200 ]; then
+            echo "Failed to update dashboard access. HTTP Status: $response"
             exit 1
           fi
