@@ -74,7 +74,6 @@ jobs:
             Changes exported from branch: ${{ steps.create_branch.outputs.deploy_branch }}
             Exported at: $(date)")
           
-          echo "Pull Request URL: $PR_URL"
           echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT
 
       - name: Delete original DEPLOY-VERSION branch
