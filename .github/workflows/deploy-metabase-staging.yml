@@ -62,9 +62,5 @@ jobs:
             Changes exported from branch: $CURRENT_BRANCH
             Exported at: $(date)")
           
-          echo "Pull Request URL: $PR_URL"
+          echo "🔗 Pull Request URL: $PR_URL"
           echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT
-
-      - name: Output PR Link
-        run: |
-          echo "🔗 Pull Request created. Please review and approve: ${{ steps.create-pr.outputs.pr_url }}"
