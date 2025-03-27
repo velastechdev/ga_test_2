@@ -23,13 +23,12 @@ jobs:
         run: |
           BRANCH_NAME="${GITHUB_REF##*/}"
           if [[ $BRANCH_NAME =~ DEPLOY-VERSION-UPDATE-([0-9]+) ]]; then
-            DASHBOARD_ID="${BASH_REMATCH[1]}"
-            echo "Dashboard ID: $DASHBOARD_ID"
-            echo "DASHBOARD_ID=$DASHBOARD_ID" >> $GITHUB_OUTPUT
+            echo "ID found: ${BASH_REMATCH[1]}"
+            echo "DASHBOARD_ID=${BASH_REMATCH[1]}" >> $GITHUB_ENV
             echo "id_found=true" >> $GITHUB_OUTPUT
           else
-            echo "Error: Invalid branch name format. Expected DEPLOY-VERSION-UPDATE-{number}"
-            exit 1
+            echo "ID not found."
+            echo "id_found=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Run Export Script
@@ -117,10 +116,10 @@ jobs:
           response=$(curl -s -o /dev/null -w "%{http_code}" --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
             --header "x-api-key: $ADMIN_API_KEY" \
             --header 'Content-Type: application/json' \
-            --data "{
-                \"name\": \"Update dashboard $DASHBOARD_ID\",
-                \"id_dashboard\": $DASHBOARD_ID
-            }")
+            --data-raw '{
+                "name": "Update dashboard '"$DASHBOARD_ID"'",
+                "id_dashboard": '"$DASHBOARD_ID"'
+            }')
           
           if [ "$response" -ne 200 ]; then
             echo "Failed to update dashboard access. HTTP Status: $response"
