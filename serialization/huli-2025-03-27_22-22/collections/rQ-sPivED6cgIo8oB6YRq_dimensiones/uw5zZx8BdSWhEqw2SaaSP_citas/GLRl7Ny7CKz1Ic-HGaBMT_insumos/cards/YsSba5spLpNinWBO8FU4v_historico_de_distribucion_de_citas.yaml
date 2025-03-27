@@ -1,9 +1,9 @@
-name: Total de citas completadas
-description: Citas con pacientes asociados
-entity_id: eRcERn2tkbvTQDGvQbah2
-created_at: '2025-03-27T20:29:51.239284Z'
+name: Histórico de distribución de citas
+description: null
+entity_id: YsSba5spLpNinWBO8FU4v
+created_at: '2025-03-27T22:22:11.514611Z'
 creator_id: christopher.diaz@huli.io
-display: scalar
+display: pie
 archived: false
 collection_id: GLRl7Ny7CKz1Ic-HGaBMT
 collection_preview: true
@@ -26,9 +26,18 @@ dataset_query:
     aggregation:
     - - count
     aggregation-idents:
-      0: aggregation_eRcERn2tkbvTQDGvQbah2@0__0
+      0: aggregation_YsSba5spLpNinWBO8FU4v@0__0
+    breakout:
+    - - field
+      - - Data WareHouse (PROD)
+        - huli_main_aurora_result
+        - appointment
+        - appointment_status
+      - base-type: type/Text
+    breakout-idents:
+      0: breakout_YsSba5spLpNinWBO8FU4v@0__0
     expression-idents:
-      Rango de edad: expression_eRcERn2tkbvTQDGvQbah2@0__Rango de edad
+      Rango de edad: expression_YsSba5spLpNinWBO8FU4v@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -174,12 +183,36 @@ dataset_query:
         - appointment_status
       - base-type: type/Text
     - completed
+    - canceled
+    - no-show
     source-table:
     - Data WareHouse (PROD)
     - huli_main_aurora_result
     - appointment
   type: query
 result_metadata:
+- base_type: type/Text
+  coercion_strategy: null
+  description: null
+  display_name: Appointment Status
+  effective_type: type/Text
+  field_ref:
+  - field
+  - - Data WareHouse (PROD)
+    - huli_main_aurora_result
+    - appointment
+    - appointment_status
+  - base-type: type/Text
+  fk_target_field_id: null
+  id:
+  - Data WareHouse (PROD)
+  - huli_main_aurora_result
+  - appointment
+  - appointment_status
+  name: appointment_status
+  semantic_type: type/Category
+  settings: null
+  visibility_type: normal
 - base_type: type/Integer
   display_name: Count
   effective_type: type/Integer
@@ -190,9 +223,35 @@ result_metadata:
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
+  pie.percent_visibility: inside
+  pie.rows:
+  - color: '#84BB4C'
+    defaultColor: true
+    enabled: true
+    hidden: false
+    isOther: false
+    key: completed
+    name: Completada
+    originalName: completed
+  - color: '#FFB300'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: canceled
+    name: Cancelada
+    originalName: canceled
+  - color: '#D10057'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: no-show
+    name: Paciente no se presentó
+    originalName: no-show
 serdes/meta:
-- id: eRcERn2tkbvTQDGvQbah2
-  label: total_de_citas_completadas
+- id: YsSba5spLpNinWBO8FU4v
+  label: historico_de_distribucion_de_citas
   model: Card
 archived_directly: false
 dashboard_id: null
