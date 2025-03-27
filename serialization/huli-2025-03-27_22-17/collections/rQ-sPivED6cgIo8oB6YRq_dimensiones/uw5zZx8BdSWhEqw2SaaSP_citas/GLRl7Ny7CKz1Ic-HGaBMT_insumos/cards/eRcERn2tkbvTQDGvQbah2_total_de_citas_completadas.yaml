@@ -1,7 +1,7 @@
-name: Pacientes atendidos (unidad)
-description: Número total de pacientes únicos atendidos
-entity_id: pAbQlxzrz81lWMZhTI2yx
-created_at: '2025-03-27T15:43:49.597576Z'
+name: Total de citas completadas
+description: Citas con pacientes asociados
+entity_id: eRcERn2tkbvTQDGvQbah2
+created_at: '2025-03-27T20:29:51.239284Z'
 creator_id: christopher.diaz@huli.io
 display: scalar
 archived: false
@@ -24,22 +24,11 @@ dataset_query:
   database: Data WareHouse (PROD)
   query:
     aggregation:
-    - - aggregation-options
-      - - distinct
-        - - field
-          - - Data WareHouse (PROD)
-            - huli_main_aurora_result
-            - appointment
-            - patient_id
-          - base-type: type/Integer
-      - name: Paciente único
-        display-name: Paciente único
     - - count
     aggregation-idents:
-      0: aggregation_pAbQlxzrz81lWMZhTI2yx@0__0
-      1: aggregation_pAbQlxzrz81lWMZhTI2yx@0__1
+      0: aggregation_eRcERn2tkbvTQDGvQbah2@0__0
     expression-idents:
-      Rango de edad: expression_pAbQlxzrz81lWMZhTI2yx@0__Rango de edad
+      Rango de edad: expression_eRcERn2tkbvTQDGvQbah2@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -192,27 +181,18 @@ dataset_query:
   type: query
 result_metadata:
 - base_type: type/Integer
-  display_name: Paciente único
-  effective_type: type/Integer
-  field_ref:
-  - aggregation
-  - 0
-  name: Paciente único
-  semantic_type: type/Quantity
-  settings: null
-- base_type: type/Integer
   display_name: Count
   effective_type: type/Integer
   field_ref:
   - aggregation
-  - 1
+  - 0
   name: count
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
 serdes/meta:
-- id: pAbQlxzrz81lWMZhTI2yx
-  label: pacientes_atendidos__unidad_
+- id: eRcERn2tkbvTQDGvQbah2
+  label: total_de_citas_completadas
   model: Card
 archived_directly: false
 dashboard_id: null
