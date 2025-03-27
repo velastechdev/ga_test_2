@@ -1,0 +1,83 @@
+name: Average product rating overall
+description: Indicates the average customer review of our products
+entity_id: -BcEE22ptXyDOgUNRqyct
+created_at: '2025-01-24T21:36:53.050393Z'
+creator_id: internal@metabase.com
+display: gauge
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- PRODUCTS
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - avg
+      - - field
+        - - Sample Database
+          - PUBLIC
+          - PRODUCTS
+          - RATING
+        - base-type: type/Float
+    aggregation-idents:
+      0: aggregation_-BcEE22ptXyDOgUNRqyct@0__0
+    source-table:
+    - Sample Database
+    - PUBLIC
+    - PRODUCTS
+  type: query
+result_metadata:
+- base_type: type/Float
+  display_name: Average of Rating
+  effective_type: type/Float
+  field_ref:
+  - aggregation
+  - 0
+  name: avg
+  semantic_type: type/Score
+  settings: null
+visualization_settings:
+  column_settings: null
+  gauge.segments:
+  - color: '#EF8C8C'
+    label: awful
+    max: 1
+    min: 0
+  - color: '#F2A86F'
+    label: bad
+    max: 2
+    min: 1
+  - color: '#F9D45C'
+    label: alright
+    max: 3
+    min: 2
+  - color: '#A7D07C'
+    label: good
+    max: 4
+    min: 3
+  - color: '#689636'
+    label: great
+    max: 5
+    min: 4
+  table.cell_column: avg
+serdes/meta:
+- id: -BcEE22ptXyDOgUNRqyct
+  label: average_product_rating_overall
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: null
+type: question

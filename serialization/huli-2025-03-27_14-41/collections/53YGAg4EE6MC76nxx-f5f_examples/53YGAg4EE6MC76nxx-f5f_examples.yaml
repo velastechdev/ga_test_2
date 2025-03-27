@@ -1,0 +1,18 @@
+name: Examples
+description: null
+entity_id: 53YGAg4EE6MC76nxx-f5f
+slug: examples
+created_at: '2024-11-29T16:36:49Z'
+archived: true
+type: null
+parent_id: null
+personal_owner_id: null
+namespace: null
+authority_level: null
+serdes/meta:
+- id: 53YGAg4EE6MC76nxx-f5f
+  label: examples
+  model: Collection
+archive_operation_id: 828b0fb3-24c8-4e18-a65f-84b8ef543701
+archived_directly: true
+is_sample: true

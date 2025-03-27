@@ -1,0 +1,93 @@
+name: Revenue per age group
+description: Shows the revenue distributed by age group
+entity_id: rqxxsDv8zhSBXgJmVjyWa
+created_at: '2025-01-24T21:36:53.040101Z'
+creator_id: internal@metabase.com
+display: bar
+archived: true
+collection_id: 53YGAg4EE6MC76nxx-f5f
+collection_preview: true
+collection_position: null
+query_type: query
+database_id: Sample Database
+table_id:
+- Sample Database
+- PUBLIC
+- ORDERS
+enable_embedding: false
+embedding_params: null
+made_public_by_id: null
+public_uuid: null
+parameters: []
+parameter_mappings: []
+dataset_query:
+  database: Sample Database
+  query:
+    aggregation:
+    - - sum
+      - - field
+        - TOTAL
+        - base-type: type/Float
+    aggregation-idents:
+      0: aggregation_rqxxsDv8zhSBXgJmVjyWa@0__0
+    breakout:
+    - - field
+      - Age
+      - base-type: type/BigInteger
+        binning:
+          strategy: num-bins
+          num-bins: 10
+    breakout-idents:
+      0: breakout_rqxxsDv8zhSBXgJmVjyWa@0__0
+    source-table: hjNoawcRfsDrC32g7LSOE
+  type: query
+result_metadata:
+- base_type: type/BigInteger
+  binning_info:
+    bin_width: 5.0
+    binning_strategy: num-bins
+    max_value: 65.0
+    min_value: 20.0
+    num_bins: 10
+  display_name: 'Age: 10 agrupaciones: 10 bins'
+  effective_type: type/BigInteger
+  field_ref:
+  - field
+  - Age
+  - base-type: type/BigInteger
+    binning:
+      strategy: num-bins
+      num-bins: 10
+      min-value: 20.0
+      max-value: 65.0
+      bin-width: 5.0
+  name: Age
+  source: breakout
+- aggregation_index: 0
+  base_type: type/Float
+  display_name: Sum of Total
+  field_ref:
+  - aggregation
+  - 0
+  name: sum
+  source: aggregation
+visualization_settings:
+  column_settings: null
+  graph.dimensions:
+  - Age
+  graph.metrics:
+  - sum
+  graph.series_order: null
+  graph.series_order_dimension: null
+  graph.show_values: true
+  stackable.stack_type: stacked
+  table.cell_column: SUBTOTAL
+serdes/meta:
+- id: rqxxsDv8zhSBXgJmVjyWa
+  label: revenue_per_age_group
+  model: Card
+archived_directly: false
+dashboard_id: null
+metabase_version: v1.53.8 (e1eecad)
+source_card_id: hjNoawcRfsDrC32g7LSOE
+type: question
