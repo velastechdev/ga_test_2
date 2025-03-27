@@ -1,9 +1,9 @@
-name: Pacientes atendidos por día en promedio
-description: Se contabiliza la cantidad de citas agendadas por día y se promedian
-entity_id: j-GruBVLLifkj3CTTjc24
-created_at: '2025-03-27T14:00:29.441056Z'
+name: ¿Qué horario agendaron más tus pacientes?
+description: null
+entity_id: qYZmcKKFIOgWIC5ZBSdPV
+created_at: '2025-03-27T15:43:49.597576Z'
 creator_id: christopher.diaz@huli.io
-display: scalar
+display: bar
 archived: false
 collection_id: GLRl7Ny7CKz1Ic-HGaBMT
 collection_preview: true
@@ -17,15 +17,15 @@ made_public_by_id: null
 public_uuid: null
 parameters:
 - default: '0'
-  id: b2c859e2-cb5d-4268-9e28-29459632be6f
-  name: ID Organization
-  slug: id_organization
+  id: 1ca6269e-01f0-44e1-ba3f-dd7a3b082b8f
+  name: Organization ID
+  slug: organization_id
   target:
   - variable
   - - template-tag
-    - id_organization
+    - organization_id
   type: number/=
-- id: bd8ea634-ce24-44b1-b2d3-2ce2841f5308
+- id: e33e388a-c1b9-4fb3-80f0-7de6f4da9f18
   name: Date Range
   slug: date_range
   target:
@@ -33,7 +33,7 @@ parameters:
   - - template-tag
     - date_range
   type: date/range
-- id: d4a5a4ca-12d7-4f40-9226-53079be26abd
+- id: 3cbfff20-f2e6-4615-aae7-cdbe7fdfd2ef
   name: Patient Sex
   slug: patient_sex
   target:
@@ -49,17 +49,14 @@ parameters:
     - - F
       - Mujer
   values_source_type: static-list
-- id: ef51c312-0391-4303-984c-6912eeb66f22
+- id: 4e93a33f-9709-440a-83f1-7c4885c852d0
   name: Tags
-  options:
-    case-sensitive: false
   slug: tags
   target:
   - dimension
   - - template-tag
     - tags
-  type: string/contains
-  values_query_type: list
+  type: string/=
   values_source_config:
     card_id: zdqbhcaieh1vn77knB85X
     value_field:
@@ -67,7 +64,7 @@ parameters:
     - tags
     - base-type: type/Text
   values_source_type: card
-- id: d161b8d8-2896-4d50-86bc-0429ec0f1cad
+- id: 79c2b3e8-61ba-4aba-83df-050455b62d97
   name: Is Confirmed
   slug: is_confirmed
   target:
@@ -83,7 +80,7 @@ parameters:
     - - '0'
       - 'No'
   values_source_type: static-list
-- id: d6db0759-645e-40ed-a706-82f194889749
+- id: dc7afeae-d40f-4253-a80a-4325bf01c241
   name: Age Range
   slug: age_range
   target:
@@ -93,13 +90,13 @@ parameters:
   type: category
   values_query_type: list
   values_source_config:
-    card_id: zdqbhcaieh1vn77knB85X
+    card_id: 1oOS0j-YDFAKdKpAI54U1
     value_field:
     - field
-    - tags
+    - age_group
     - base-type: type/Text
   values_source_type: card
-- id: cc4379ee-60f4-4d75-acbf-822f74eabf46
+- id: fbe390d6-587e-4ecf-8a4c-c3e6976e85c4
   name: Clinic Name
   slug: clinic_name
   target:
@@ -118,11 +115,11 @@ parameter_mappings: []
 dataset_query:
   database: Data WareHouse (PROD)
   native:
-    query: "WITH registros_por_dia AS (\n  SELECT \n    DATE(`start_date`) AS fecha,\n    {{snippet: field_age_range}},\n    COUNT(*) AS total_registros\n  FROM \n    `huli_main_aurora_result.appointment`\n  WHERE \n    `start_date` IS NOT NULL\n  AND `organization_id`= {{ id_organization }}\n  AND `appointment_status` = 'completed'\n  [[ AND {{ date_range }} ]]\n  [[ AND `patient_sex` = {{ patient_sex }} ]]\n  [[ AND {{ tags }} ]]\n  [[ AND {{ clinic_name }} ]]\n  [[ AND `is_confirmed` = CAST({{ is_confirmed }} AS INT64) ]]\n  GROUP BY \n    fecha, `Rango_de_edad`\n)\nSELECT \n  ROUND(COALESCE(AVG(total_registros), 0), 2) AS promedio_registros_por_dia\nFROM (\n  SELECT \n    fecha, \n    SUM(total_registros) AS total_registros  -- Usar SUM para evitar error de agregación\n  FROM registros_por_dia\n  WHERE 1 = 1\n     [[ AND `Rango_de_edad` IN ({{ age_range }}) ]]\n  GROUP BY fecha\n\n) subquery;"
+    query: "SELECT\n  FORMAT('%02d:00 %s', \n         CASE \n           WHEN `Hour_in_hrs` = 0 THEN 12 -- 0 hours that correspond to 12 AM\n           WHEN `Hour_in_hrs` > 12 THEN `Hour_in_hrs` - 12 -- PM hours after 12\n           ELSE `Hour_in_hrs` -- AM hours and 12 PM \n         END,\n         IF(`Hour_in_hrs` >= 12, 'PM', 'AM')) AS `Hour_in_ampm`,\n  COUNT(*) AS `count`\nFROM\n  (\n    SELECT\n        EXTRACT(hour FROM TIMESTAMP(`start_date`)) AS `Hour_in_hrs`,\n        `huli_main_aurora_result.appointment`,\n        {{snippet: field_age_range}},\n        CASE \n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 1 THEN '1'\n            WHEN `huli_main_aurora_result.appointment`.`is_confirmed` = 0 THEN '0'\n            ELSE NULL -- Opcional para valores inesperados (como NULL)\n        END AS is_confirmed\n    FROM `huli_main_aurora_result.appointment`\n  )\nWHERE `huli_main_aurora_result.appointment`.`appointment_status` = 'completed'\nAND `huli_main_aurora_result.appointment`.`organization_id` = {{ organization_id }}\n[[ AND {{ date_range }} ]]\n[[ AND `huli_main_aurora_result.appointment`.`patient_sex` = {{ patient_sex }} ]]\n[[ AND {{ tags }} ]]\n[[ AND {{ clinic_name }} ]]\n[[ AND is_confirmed = {{ is_confirmed }} ]]\n[[ AND `Rango_de_edad` IN ({{ age_range }}) ]]\nGROUP BY\n  `Hour_in_ampm`, `Hour_in_hrs`\nORDER BY\n  `Hour_in_hrs`;"
     template-tags:
       age_range:
         display-name: Age Range
-        id: d6db0759-645e-40ed-a706-82f194889749
+        id: dc7afeae-d40f-4253-a80a-4325bf01c241
         name: age_range
         type: text
       clinic_name:
@@ -135,8 +132,9 @@ dataset_query:
           - clinic_name
         - null
         display-name: Clinic Name
-        id: cc4379ee-60f4-4d75-acbf-822f74eabf46
+        id: fbe390d6-587e-4ecf-8a4c-c3e6976e85c4
         name: clinic_name
+        options: null
         type: dimension
         widget-type: string/=
       date_range:
@@ -149,34 +147,37 @@ dataset_query:
           - start_date
         - null
         display-name: Date Range
-        id: bd8ea634-ce24-44b1-b2d3-2ce2841f5308
+        id: e33e388a-c1b9-4fb3-80f0-7de6f4da9f18
         name: date_range
+        options: null
         type: dimension
         widget-type: date/range
-      id_organization:
-        default: '0'
-        display-name: ID Organization
-        id: b2c859e2-cb5d-4268-9e28-29459632be6f
-        name: id_organization
-        type: number
       is_confirmed:
         display-name: Is Confirmed
-        id: d161b8d8-2896-4d50-86bc-0429ec0f1cad
+        id: 79c2b3e8-61ba-4aba-83df-050455b62d97
         name: is_confirmed
         type: text
+      organization_id:
+        default: '0'
+        display-name: Organization ID
+        id: 1ca6269e-01f0-44e1-ba3f-dd7a3b082b8f
+        name: organization_id
+        type: number
+        widget-type: null
       patient_sex:
         display-name: Patient Sex
-        id: d4a5a4ca-12d7-4f40-9226-53079be26abd
+        id: 3cbfff20-f2e6-4615-aae7-cdbe7fdfd2ef
         name: patient_sex
         type: text
       'snippet: field_age_range':
         display-name: 'Snippet: Field Age Range'
-        id: da5c1e23-0071-4f6f-8e43-879a5e2de45d
+        id: e65ee79e-b67d-4f59-b8ab-c9e5a2f7b1fc
         name: 'snippet: field_age_range'
         snippet-id: 5w5_JWozQqewpqsyWL-H1
         snippet-name: field_age_range
         type: snippet
       tags:
+        default: null
         dimension:
         - field
         - - Data WareHouse (PROD)
@@ -185,28 +186,47 @@ dataset_query:
           - tags
         - null
         display-name: Tags
-        id: ef51c312-0391-4303-984c-6912eeb66f22
+        id: 4e93a33f-9709-440a-83f1-7c4885c852d0
         name: tags
-        options:
-          case-sensitive: false
+        options: null
         type: dimension
-        widget-type: string/contains
+        widget-type: string/=
   type: native
 result_metadata:
-- base_type: type/Float
-  display_name: promedio_registros_por_dia
-  effective_type: type/Float
+- base_type: type/Text
+  display_name: Hour_in_ampm
+  effective_type: type/Text
   field_ref:
   - field
-  - promedio_registros_por_dia
-  - base-type: type/Float
-  name: promedio_registros_por_dia
+  - Hour_in_ampm
+  - base-type: type/Text
+  name: Hour_in_ampm
   semantic_type: null
+- base_type: type/Integer
+  display_name: count
+  effective_type: type/Integer
+  field_ref:
+  - field
+  - count
+  - base-type: type/Integer
+  name: count
+  semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
+  graph.dimensions:
+  - Hour_in_ampm
+  graph.metrics:
+  - count
+  graph.show_values: true
+  graph.x_axis.title_text: Hora
+  graph.y_axis.title_text: Número de Citas
+  series_settings:
+    count:
+      color: '#8CCE47'
+      title: Total
 serdes/meta:
-- id: j-GruBVLLifkj3CTTjc24
-  label: pacientes_atendidos_por_dia_en_promedio
+- id: qYZmcKKFIOgWIC5ZBSdPV
+  label: ¿que_horario_agendaron_mas_tus_pacientes_
   model: Card
 archived_directly: false
 dashboard_id: null

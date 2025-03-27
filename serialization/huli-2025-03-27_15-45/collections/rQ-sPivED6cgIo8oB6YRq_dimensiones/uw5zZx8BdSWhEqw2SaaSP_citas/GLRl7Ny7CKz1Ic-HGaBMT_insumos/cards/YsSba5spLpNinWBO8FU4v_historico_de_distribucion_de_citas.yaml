@@ -1,9 +1,9 @@
-name: Histórico de citas
+name: Histórico de distribución de citas
 description: null
-entity_id: 7AF9sAISQbcm6zGpI7715
-created_at: '2025-03-27T14:00:29.441056Z'
+entity_id: YsSba5spLpNinWBO8FU4v
+created_at: '2025-03-27T15:43:49.597576Z'
 creator_id: christopher.diaz@huli.io
-display: line
+display: pie
 archived: false
 collection_id: GLRl7Ny7CKz1Ic-HGaBMT
 collection_preview: true
@@ -26,15 +26,8 @@ dataset_query:
     aggregation:
     - - count
     aggregation-idents:
-      0: aggregation_7AF9sAISQbcm6zGpI7715@0__0
+      0: aggregation_YsSba5spLpNinWBO8FU4v@0__0
     breakout:
-    - - field
-      - - Data WareHouse (PROD)
-        - huli_main_aurora_result
-        - appointment
-        - start_date
-      - base-type: type/DateTime
-        temporal-unit: month
     - - field
       - - Data WareHouse (PROD)
         - huli_main_aurora_result
@@ -42,10 +35,9 @@ dataset_query:
         - appointment_status
       - base-type: type/Text
     breakout-idents:
-      0: breakout_7AF9sAISQbcm6zGpI7715@0__0
-      1: breakout_7AF9sAISQbcm6zGpI7715@0__1
+      0: breakout_YsSba5spLpNinWBO8FU4v@0__0
     expression-idents:
-      Rango de edad: expression_7AF9sAISQbcm6zGpI7715@0__Rango de edad
+      Rango de edad: expression_YsSba5spLpNinWBO8FU4v@0__Rango de edad
     expressions:
       Rango de edad:
       - case
@@ -190,39 +182,15 @@ dataset_query:
         - appointment
         - appointment_status
       - base-type: type/Text
+    - completed
     - canceled
     - no-show
-    - completed
     source-table:
     - Data WareHouse (PROD)
     - huli_main_aurora_result
     - appointment
   type: query
 result_metadata:
-- base_type: type/DateTime
-  coercion_strategy: null
-  description: null
-  display_name: 'Start Date: Month'
-  effective_type: type/DateTime
-  field_ref:
-  - field
-  - - Data WareHouse (PROD)
-    - huli_main_aurora_result
-    - appointment
-    - start_date
-  - base-type: type/DateTime
-    temporal-unit: month
-  fk_target_field_id: null
-  id:
-  - Data WareHouse (PROD)
-  - huli_main_aurora_result
-  - appointment
-  - start_date
-  name: start_date
-  semantic_type: type/CreationTimestamp
-  settings: null
-  unit: month
-  visibility_type: normal
 - base_type: type/Text
   coercion_strategy: null
   description: null
@@ -255,29 +223,35 @@ result_metadata:
   semantic_type: type/Quantity
 visualization_settings:
   column_settings: null
-  graph.dimensions:
-  - start_date
-  - appointment_status
-  graph.metrics:
-  - count
-  graph.x_axis.title_text: Fecha
-  graph.y_axis.title_text: Número de citas
-  series_settings:
-    canceled:
-      color: '#FFB300'
-      line.size: L
-      title: Cancelada
-    completed:
-      color: '#8CCE47'
-      line.size: L
-      title: Completeda
-    no-show:
-      color: '#D10057'
-      line.size: M
-      title: Paciente no se presentó
+  pie.percent_visibility: inside
+  pie.rows:
+  - color: '#84BB4C'
+    defaultColor: true
+    enabled: true
+    hidden: false
+    isOther: false
+    key: completed
+    name: Completada
+    originalName: completed
+  - color: '#FFB300'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: canceled
+    name: Cancelada
+    originalName: canceled
+  - color: '#D10057'
+    defaultColor: false
+    enabled: true
+    hidden: false
+    isOther: false
+    key: no-show
+    name: Paciente no se presentó
+    originalName: no-show
 serdes/meta:
-- id: 7AF9sAISQbcm6zGpI7715
-  label: historico_de_citas
+- id: YsSba5spLpNinWBO8FU4v
+  label: historico_de_distribucion_de_citas
   model: Card
 archived_directly: false
 dashboard_id: null

@@ -1,7 +1,7 @@
 name: Métricas de Citas
 description: null
 entity_id: eOytkPrbKeJQ4P5zN8dW4
-created_at: '2025-03-27T14:00:30.640597Z'
+created_at: '2025-03-27T15:43:50.859656Z'
 creator_id: christopher.diaz@huli.io
 archived: false
 collection_id: uw5zZx8BdSWhEqw2SaaSP
@@ -123,7 +123,7 @@ dashcards:
 
       Próximamente, añadiremos nuevas métricas para ayudarte a tomar decisiones más informadas.
 
-      Las métricas en esta sección se actualizan diariamente a las 9:00 am y reflejan datos del día anterior hacia atrás. Si tienes alguna duda [entra aquí](https://help.hulipractice.com/es/collections/11404887-metricas)
+      Las métricas en esta sección se actualizan diariamente a las 9:00 am y reflejan datos del día anterior hacia atrás. Si tienes alguna duda [entra aquí](https://help.hulipractice.com/es/collections/11404887-metricas).
     virtual_card:
       archived: false
       dataset_query: {}
