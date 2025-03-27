@@ -82,6 +82,7 @@ jobs:
 
       - name: Create Pull Request
         if: ${{ steps.export.outcome == 'success' }}
+        id: create-pr
         working-directory: ./repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -90,26 +91,40 @@ jobs:
           BASE_BRANCH="${{ steps.create_branch.outputs.deploy_branch }}"
           TEMP_BRANCH="${{ steps.create_branch.outputs.temp_branch }}"
           
-          # Create the pull request
-          gh pr create \
+          # Create the pull request and capture the PR number
+          PR_NUMBER=$(gh pr create \
             --base "$BASE_BRANCH" \
             --head "$TEMP_BRANCH" \
             --title "Export updates from $BASE_BRANCH" \
             --body "Automated export of Metabase serialization
             
             Changes exported from branch: $BASE_BRANCH
-            Exported at: $(date)"
+            Exported at: $(date)")
+          
+          # Output the PR number for use in next steps
+          echo "pr_number=${PR_NUMBER}" >> $GITHUB_OUTPUT
+  
+      - name: Merge Pull Request
+        if: ${{ steps.create-pr.outcome == 'success' }}
+        working-directory: ./repo
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Merge the pull request
+          gh pr merge ${{ steps.create-pr.outputs.pr_number }} \
+            --merge \
+            --delete-branch
 
-      # - name: Delete original DEPLOY-VERSION branch
-      #   if: ${{ steps.export.outcome == 'success' }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     if [[ "${{ steps.create_branch.outputs.deploy_branch }}" == "main" ]]; then
-      #       echo "Not deleting the main branch."
-      #     else
-      #       curl -X DELETE \
-      #         -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-      #         -H "Accept: application/vnd.github+json" \
-      #         "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ steps.create_branch.outputs.deploy_branch }}"
-      #     fi
+      - name: Delete original DEPLOY-VERSION branch
+        if: ${{ steps.export.outcome == 'success' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${{ steps.create_branch.outputs.deploy_branch }}" == "main" ]]; then
+            echo "Not deleting the main branch."
+          else
+            curl -X DELETE \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${{ github.repository }}/git/refs/heads/${{ steps.create_branch.outputs.deploy_branch }}"
+          fi
