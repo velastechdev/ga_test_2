@@ -30,9 +30,12 @@ jobs:
             endpoint_url=$ENDPOINT_URL \
             api_key=$API_KEY
 
-      # Check if the ENTITY_ID is available from the repository variable
-      # ENTITY_ID is the dashboard identifier that we want to update
-      # It is used to fetch the dashboard ID from Metabase
+      # Check if the ENTITY_ID is available from the repository variable. If there is a
+      # an ENTITY_ID available, it means the process need to set a new version of the dashboard
+      # to all users using the old version. This process is done through manager-api.
+      #
+      # ENTITY_ID is the Metabase dashboard internal identifier that we want to update
+      # It is used to fetch the dashboard ID (used in the dashboard URL) from Metabase
       # If the ENTITY_ID is empty or only whitespace, skip the subsequent steps
       - name: Check if a Metabase Dashboard ENTITY_ID is available
         if: success()
