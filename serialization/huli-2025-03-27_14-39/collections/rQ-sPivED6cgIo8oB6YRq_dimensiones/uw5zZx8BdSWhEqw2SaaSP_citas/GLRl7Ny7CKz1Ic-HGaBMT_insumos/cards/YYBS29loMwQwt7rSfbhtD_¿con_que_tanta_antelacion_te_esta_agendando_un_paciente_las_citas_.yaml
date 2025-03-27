@@ -1,7 +1,7 @@
 name: ¿Con qué tanta antelación te está agendando un paciente las citas?
 description: Se excluyen citas creadas en el pasado
 entity_id: YYBS29loMwQwt7rSfbhtD
-created_at: '2025-03-26T18:09:44.054737Z'
+created_at: '2025-03-27T14:00:29.441056Z'
 creator_id: christopher.diaz@huli.io
 display: scalar
 archived: false
