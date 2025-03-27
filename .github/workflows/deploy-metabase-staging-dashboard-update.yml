@@ -75,6 +75,26 @@ jobs:
           
           echo "🔗 Pull Request URL: $PR_URL"
           echo "pr_url=${PR_URL}" >> $GITHUB_OUTPUT
+
+      - name: Set the new dashboard id to Huli users
+        id: call_dashboard_update
+        env:
+          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
+          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
+          MANAGER_API_URL: ${{ vars.MANAGER_API_STG_URL }}
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
+            --header "x-api-key: $ADMIN_API_KEY" \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+                "name": "Update dashboard '"$DASHBOARD_ID"'",
+                "id_dashboard": '"$DASHBOARD_ID"'
+            }')
+          
+          if [ "$response" -ne 200 ]; then
+            echo "Failed to update dashboard access. HTTP Status: $response"
+            exit 1
+          fi
       
       # Retrieve the ENTITY_ID associated with the dashboard.
       # ENTITY_ID is a unique identifier that links the dashboard to its respective entity in Metabase.
@@ -105,23 +125,3 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/${{ github.repository }}/actions/variables/ENTITY_ID" \
             -d "{\"value\":\"${ENTITY_ID}\"}"
-      
-      - name: Set the new dashboard id to Huli users
-        id: call_dashboard_update
-        env:
-          DASHBOARD_ID: ${{ env.DASHBOARD_ID }}
-          ADMIN_API_KEY: ${{ secrets.ADMIN_API_KEY }}
-          MANAGER_API_URL: ${{ vars.MANAGER_API_STG_URL }}
-        run: |
-          response=$(curl -s -o /dev/null -w "%{http_code}" --location --request PUT "$MANAGER_API_URL/es/api/v3/toggle/feature/user/dashboard" \
-            --header "x-api-key: $ADMIN_API_KEY" \
-            --header 'Content-Type: application/json' \
-            --data-raw '{
-                "name": "Update dashboard '"$DASHBOARD_ID"'",
-                "id_dashboard": '"$DASHBOARD_ID"'
-            }')
-          
-          if [ "$response" -ne 200 ]; then
-            echo "Failed to update dashboard access. HTTP Status: $response"
-            exit 1
-          fi
