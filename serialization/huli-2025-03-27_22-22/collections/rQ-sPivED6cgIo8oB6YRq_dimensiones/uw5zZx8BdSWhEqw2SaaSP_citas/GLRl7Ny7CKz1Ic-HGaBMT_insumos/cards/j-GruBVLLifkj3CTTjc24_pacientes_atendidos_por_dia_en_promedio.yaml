@@ -1,7 +1,7 @@
-name: ¿Con qué tanta antelación te está agendando un paciente las citas?
-description: Se excluyen citas creadas en el pasado
-entity_id: YYBS29loMwQwt7rSfbhtD
-created_at: '2025-03-27T20:29:51.124184Z'
+name: Pacientes atendidos por día en promedio
+description: Se contabiliza la cantidad de citas agendadas por día y se promedian
+entity_id: j-GruBVLLifkj3CTTjc24
+created_at: '2025-03-27T22:22:11.449166Z'
 creator_id: christopher.diaz@huli.io
 display: scalar
 archived: false
@@ -17,7 +17,7 @@ made_public_by_id: null
 public_uuid: null
 parameters:
 - default: '0'
-  id: e55225f0-a2ea-4c10-88a4-aef14ff4edf1
+  id: b2c859e2-cb5d-4268-9e28-29459632be6f
   name: ID Organization
   slug: id_organization
   target:
@@ -25,7 +25,7 @@ parameters:
   - - template-tag
     - id_organization
   type: number/=
-- id: 3bf26111-e4a1-49a5-bdcb-c93321630391
+- id: bd8ea634-ce24-44b1-b2d3-2ce2841f5308
   name: Date Range
   slug: date_range
   target:
@@ -33,7 +33,7 @@ parameters:
   - - template-tag
     - date_range
   type: date/range
-- id: 8c0b6bc9-d841-42c4-aa83-0f134d7d3ef8
+- id: d4a5a4ca-12d7-4f40-9226-53079be26abd
   name: Patient Sex
   slug: patient_sex
   target:
@@ -49,14 +49,17 @@ parameters:
     - - F
       - Mujer
   values_source_type: static-list
-- id: e7f908c1-38dc-4b39-8ef8-7f897f853c3c
+- id: ef51c312-0391-4303-984c-6912eeb66f22
   name: Tags
+  options:
+    case-sensitive: false
   slug: tags
   target:
   - dimension
   - - template-tag
     - tags
-  type: string/=
+  type: string/contains
+  values_query_type: list
   values_source_config:
     card_id: zdqbhcaieh1vn77knB85X
     value_field:
@@ -64,7 +67,7 @@ parameters:
     - tags
     - base-type: type/Text
   values_source_type: card
-- id: 1c78b712-ebd7-41b1-9b5d-6a5ffa090b4e
+- id: d161b8d8-2896-4d50-86bc-0429ec0f1cad
   name: Is Confirmed
   slug: is_confirmed
   target:
@@ -80,7 +83,7 @@ parameters:
     - - '0'
       - 'No'
   values_source_type: static-list
-- id: 785b025b-3e45-42a6-961f-98c328028b00
+- id: d6db0759-645e-40ed-a706-82f194889749
   name: Age Range
   slug: age_range
   target:
@@ -90,13 +93,13 @@ parameters:
   type: category
   values_query_type: list
   values_source_config:
-    card_id: 1oOS0j-YDFAKdKpAI54U1
+    card_id: zdqbhcaieh1vn77knB85X
     value_field:
     - field
-    - age_group
+    - tags
     - base-type: type/Text
   values_source_type: card
-- id: 54726ff1-2e19-4997-9f7e-a9f14dd747c5
+- id: cc4379ee-60f4-4d75-acbf-822f74eabf46
   name: Clinic Name
   slug: clinic_name
   target:
@@ -115,11 +118,11 @@ parameter_mappings: []
 dataset_query:
   database: Data WareHouse (PROD)
   native:
-    query: "SELECT \n  CONCAT(\n    CAST(\n      ROUND(\n        COALESCE(\n          AVG(days_diff), 0\n        ), \n        1\n      ) AS STRING\n    ), \n    ' días'\n  ) AS average_days_difference\nFROM (\n    SELECT \n    lead_days AS days_diff,\n    {{snippet: field_age_range}},\n  FROM \n    `huli_main_aurora_result.appointment`\n  WHERE \n    `start_date` IS NOT NULL \n    AND lead_days >= 0\n    AND `created_on_user_tz` IS NOT NULL\n    AND `organization_id` = {{ id_organization }}\n    AND `appointment_status` = 'completed'\n    [[ AND {{ date_range }} ]]\n    [[ AND `patient_sex` = {{ patient_sex }} ]]\n    [[ AND {{ tags }} ]]\n    [[ AND {{ clinic_name }} ]]\n    [[ AND `is_confirmed` = CAST({{ is_confirmed }} AS INT64) ]]\n) subquery\nWHERE 1 = 1\n    [[ AND Rango_de_edad IN ({{ age_range }}) ]]\n"
+    query: "WITH registros_por_dia AS (\n  SELECT \n    DATE(`start_date`) AS fecha,\n    {{snippet: field_age_range}},\n    COUNT(*) AS total_registros\n  FROM \n    `huli_main_aurora_result.appointment`\n  WHERE \n    `start_date` IS NOT NULL\n  AND `organization_id`= {{ id_organization }}\n  AND `appointment_status` = 'completed'\n  [[ AND {{ date_range }} ]]\n  [[ AND `patient_sex` = {{ patient_sex }} ]]\n  [[ AND {{ tags }} ]]\n  [[ AND {{ clinic_name }} ]]\n  [[ AND `is_confirmed` = CAST({{ is_confirmed }} AS INT64) ]]\n  GROUP BY \n    fecha, `Rango_de_edad`\n)\nSELECT \n  ROUND(COALESCE(AVG(total_registros), 0), 2) AS promedio_registros_por_dia\nFROM (\n  SELECT \n    fecha, \n    SUM(total_registros) AS total_registros  -- Usar SUM para evitar error de agregación\n  FROM registros_por_dia\n  WHERE 1 = 1\n     [[ AND `Rango_de_edad` IN ({{ age_range }}) ]]\n  GROUP BY fecha\n\n) subquery;"
     template-tags:
       age_range:
         display-name: Age Range
-        id: 785b025b-3e45-42a6-961f-98c328028b00
+        id: d6db0759-645e-40ed-a706-82f194889749
         name: age_range
         type: text
       clinic_name:
@@ -132,9 +135,8 @@ dataset_query:
           - clinic_name
         - null
         display-name: Clinic Name
-        id: 54726ff1-2e19-4997-9f7e-a9f14dd747c5
+        id: cc4379ee-60f4-4d75-acbf-822f74eabf46
         name: clinic_name
-        options: null
         type: dimension
         widget-type: string/=
       date_range:
@@ -147,37 +149,34 @@ dataset_query:
           - start_date
         - null
         display-name: Date Range
-        id: 3bf26111-e4a1-49a5-bdcb-c93321630391
+        id: bd8ea634-ce24-44b1-b2d3-2ce2841f5308
         name: date_range
-        options: null
         type: dimension
         widget-type: date/range
       id_organization:
         default: '0'
         display-name: ID Organization
-        id: e55225f0-a2ea-4c10-88a4-aef14ff4edf1
+        id: b2c859e2-cb5d-4268-9e28-29459632be6f
         name: id_organization
         type: number
-        widget-type: null
       is_confirmed:
         display-name: Is Confirmed
-        id: 1c78b712-ebd7-41b1-9b5d-6a5ffa090b4e
+        id: d161b8d8-2896-4d50-86bc-0429ec0f1cad
         name: is_confirmed
         type: text
       patient_sex:
         display-name: Patient Sex
-        id: 8c0b6bc9-d841-42c4-aa83-0f134d7d3ef8
+        id: d4a5a4ca-12d7-4f40-9226-53079be26abd
         name: patient_sex
         type: text
       'snippet: field_age_range':
         display-name: 'Snippet: Field Age Range'
-        id: 5556a0f6-3814-497b-94cd-5a7b16ff5c33
+        id: da5c1e23-0071-4f6f-8e43-879a5e2de45d
         name: 'snippet: field_age_range'
         snippet-id: 5w5_JWozQqewpqsyWL-H1
         snippet-name: field_age_range
         type: snippet
       tags:
-        default: null
         dimension:
         - field
         - - Data WareHouse (PROD)
@@ -186,27 +185,28 @@ dataset_query:
           - tags
         - null
         display-name: Tags
-        id: e7f908c1-38dc-4b39-8ef8-7f897f853c3c
+        id: ef51c312-0391-4303-984c-6912eeb66f22
         name: tags
-        options: null
+        options:
+          case-sensitive: false
         type: dimension
-        widget-type: string/=
+        widget-type: string/contains
   type: native
 result_metadata:
-- base_type: type/Text
-  display_name: average_days_difference
-  effective_type: type/Text
+- base_type: type/Float
+  display_name: promedio_registros_por_dia
+  effective_type: type/Float
   field_ref:
   - field
-  - average_days_difference
-  - base-type: type/Text
-  name: average_days_difference
+  - promedio_registros_por_dia
+  - base-type: type/Float
+  name: promedio_registros_por_dia
   semantic_type: null
 visualization_settings:
   column_settings: null
 serdes/meta:
-- id: YYBS29loMwQwt7rSfbhtD
-  label: ¿con_que_tanta_antelacion_te_esta_agendando_un_paciente_las_citas_
+- id: j-GruBVLLifkj3CTTjc24
+  label: pacientes_atendidos_por_dia_en_promedio
   model: Card
 archived_directly: false
 dashboard_id: null
