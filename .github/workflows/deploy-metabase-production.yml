@@ -17,18 +17,18 @@ jobs:
         with:
           go-version: '1.23.1'
 
-      - name: Run Import Script
-        if: success()
-        env:
-          API_KEY: ${{ secrets.METABASE_PRODUCTION_API_KEY }}
-          ENDPOINT_URL: ${{ vars.METABASE_PRODUCTION_ENDPOINT_URL }}
-        run: |
-          echo "Running Import Script..."
-          echo "Endpoint URL: $ENDPOINT_URL"
-          echo "API Key: $API_KEY"
-          go run main.go import \
-            endpoint_url=$ENDPOINT_URL \
-            api_key=$API_KEY
+      # - name: Run Import Script
+      #   if: success()
+      #   env:
+      #     API_KEY: ${{ secrets.METABASE_PRODUCTION_API_KEYS }}
+      #     ENDPOINT_URL: ${{ vars.METABASE_PRODUCTION_ENDPOINT_URLS }}
+      #   run: |
+      #     echo "Running Import Script..."
+      #     echo "Endpoint URL: $ENDPOINT_URL"
+      #     echo "API Key: $API_KEY"
+      #     go run mains.go import \
+      #       endpoint_url=$ENDPOINT_URL \
+      #       api_key=$API_KEY
 
       # Check if the ENTITY_ID is available from the repository variable. If there is a
       # an ENTITY_ID available, it means the process need to set a new version of the dashboard
